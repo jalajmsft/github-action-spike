@@ -5,7 +5,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: jalajmsft/test-action
+    - uses: jalajmsft/test-action@v1
       with:
         who-to-greet: 'let see'
       id: hello
