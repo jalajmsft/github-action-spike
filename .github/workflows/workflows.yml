@@ -9,7 +9,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Hellow world action step
-      uses: jalajmsft/test-action
+      uses: jalajmsft/test-action@280aee4
       with:
         who-to-greet: 'let see'
       id: hello
