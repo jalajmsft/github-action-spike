@@ -4,7 +4,7 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    actions:
+    steps:
     - uses: jalajmsft/test-action
       with:
         who-to-greet: 'let see'
