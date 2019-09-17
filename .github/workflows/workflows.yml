@@ -1,0 +1,12 @@
+# .github/workflows/workflow.yml
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    actions:
+    - uses: jalajmsft/test-action
+      with:
+        who-to-greet: 'let see'
+      id: hello
+    - run: echo "The time was ${{ actions.hello.outputs.time }}"
