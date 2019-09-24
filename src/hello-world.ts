@@ -9,7 +9,8 @@ async function run() {
     let stdout = execSync('ls');
     const bash: string = await io.which('bash', true);
     console.log(bash);
-    await exec.exec(`"${bash}"`, ['sample.sh']);
+    console.log(stdout);
+    //await exec.exec(`"${bash}"`, ['sample.sh']);
 
     const nameToGreet = core.getInput('who-to-greet');
     if (nameToGreet == 'Octocat') {
