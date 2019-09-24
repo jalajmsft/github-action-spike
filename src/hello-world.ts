@@ -2,14 +2,18 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as io from '@actions/io';
-const { execSync } = require('child_process');
+const { spawnSync } = require('child_process');
 async function run() {
   try {
     console.log("starting the execution...");
-    let stdout = execSync('ls');
+    const child = spawnSync('ls', ['-lh', '/usr']);
+
+console.log('error', child.error);
+console.log('stdout ', child.stdout);
+console.log('stderr ', child.stderr);
     const bash: string = await io.which('bash', true);
     console.log(bash);
-    console.log(stdout);
+    //console.log(stdout);
     //await exec.exec(`"${bash}"`, ['sample.sh']);
 
     const nameToGreet = core.getInput('who-to-greet');
