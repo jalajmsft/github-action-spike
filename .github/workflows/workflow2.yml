@@ -1,0 +1,19 @@
+# .github/workflows/workflow.yml
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: A job to say hello
+    steps:
+    - name: Azure Login
+      uses: Azure/github-actions/login@master,
+      env: {
+        AZURE_SUBSCRIPTION = RMDev
+      }
+    - name: Hello world action step
+      uses: ./
+      with:
+        who-to-greet: 'let see'
+      id: hello
+    - run: echo "The time was ${{ steps.hello.outputs.time }}"

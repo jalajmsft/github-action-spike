@@ -6,7 +6,7 @@ const { spawn } = require('child_process');
 async function run() {
   try {
     console.log("starting the execution...");
-    const ls = spawn('az --version');
+    const ls = spawn('pwd');
 
 ls.stdout.on('data', (data:any) => {
   console.log(`stdout: ${data}`);
@@ -22,7 +22,7 @@ ls.on('close', (code:any) => {
     const bash: string = await io.which('bash', true);
     console.log(bash);
     //console.log(stdout);
-    //await exec.exec(`"${bash}"`, ['sample.sh']);
+    await exec.exec(`"${bash} ls"`);
 
     const nameToGreet = core.getInput('who-to-greet');
     if (nameToGreet == 'Octocat') {
