@@ -2,15 +2,23 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as io from '@actions/io';
-const { spawnSync } = require('child_process');
+const { spawn } = require('child_process');
 async function run() {
   try {
     console.log("starting the execution...");
-    const child = spawnSync('ls', ['-lh', '/usr']);
+    const ls = spawn('ls', ['-lh', '/usr']);
 
-console.log('error', child.error);
-console.log('stdout ', child.stdout);
-console.log('stderr ', child.stderr);
+ls.stdout.on('data', (data:any) => {
+  console.log(`stdout: ${data}`);
+});
+
+ls.stderr.on('data', (data:any) => {
+  console.error(`stderr: ${data}`);
+});
+
+ls.on('close', (code:any) => {
+  console.log(`child process exited with code ${code}`);
+});
     const bash: string = await io.which('bash', true);
     console.log(bash);
     //console.log(stdout);
