@@ -8,7 +8,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
-    - name: Hellow world action step
+    - name: Hello world action step
       uses: ./
       with:
         who-to-greet: 'let see'
