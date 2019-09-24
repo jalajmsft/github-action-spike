@@ -6,7 +6,7 @@ const { spawn } = require('child_process');
 async function run() {
   try {
     console.log("starting the execution...");
-    const ls = spawn('ls pwd', ['-lh', '/usr']);
+    const ls = spawn('az --version');
 
 ls.stdout.on('data', (data:any) => {
   console.log(`stdout: ${data}`);
