@@ -19,3 +19,9 @@ jobs:
         
     - run: |
         az account show
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Az cli spike
+      uses: ./spike-az-cli
+      with:
+        sampleInput: 'az account show'

@@ -1,0 +1,12 @@
+name: 'azcli'
+description: 'Az cli spike'
+inputs:
+  sampleInput:  # id of input
+    description: 'az cli command'
+    required: true
+    default: 'az account show'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.sampleInput }}
