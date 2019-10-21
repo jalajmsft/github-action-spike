@@ -24,4 +24,5 @@ jobs:
     - name: Az cli spike
       uses: ./spike-az-cli
       with:
+        creds: ${{ secrets.Azure_cred_login_obj }}
         sampleInput: 'az account show'

@@ -1,6 +1,9 @@
 name: 'azcli'
 description: 'Az cli spike'
 inputs:
+  creds:
+    description: 'Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS'
+    required: true
   sampleInput:  # id of input
     description: 'az cli command'
     required: true
@@ -10,3 +13,4 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.sampleInput }}
+    - ${{ inputs.creds }}
