@@ -1,5 +1,5 @@
 #!/bin/bash
 
-echo "hello $1"
+echo "command is $1"
 
-echo "$1"
+sh -c "$1"

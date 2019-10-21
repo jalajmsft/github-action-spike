@@ -15,7 +15,7 @@ jobs:
         creds: ${{ secrets.Azure_cred_login_obj }}
     
     - run: |
-        az webapp list --query "[?state=='Running']"
+        #az webapp list --query "[?state=='Running']"
         
     - run: |
         az account show
