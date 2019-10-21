@@ -1,12 +1,12 @@
 #!/bin/bash
 
-echo "command is $sampleInput"
+echo "command is $1"
 
 echo "login into az"
-servicePrincipalId = credsObject["clientId"];
-servicePrincipalKey = credsObject["clientSecret"];
-tenantId = credsObject["tenantId"];
-subscriptionId = credsObject["subscriptionId"];
+servicePrincipalId = $2["clientId"]
+servicePrincipalKey = $2["clientSecret"]
+tenantId = $2["tenantId"]
+subscriptionId = $2["subscriptionId"]
 
 if [[ -n "$servicePrincipalId" ]] && [[ -n "$servicePrincipalKey" ]] && [[ -n "$tenantId" ]]
 then
@@ -28,4 +28,4 @@ else
   fi
 fi
 
-sh -c "$sampleInput"
+sh -c "$1"
