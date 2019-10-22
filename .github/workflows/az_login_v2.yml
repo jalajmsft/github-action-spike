@@ -22,12 +22,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Az cli spike
-      uses: ./spike-az-cli
+      #uses: ./spike-az-cli
+      uses: jalajmsft/github-action-spike/spike-az-cli@1.0.0_cli-2.0.74
       env: 
         my_env_var: ${{ toJson(secrets.Dummy_OBJ) }}
       with:
         AZURE_SERVICE_APP_ID: ${{ secrets.AZURE_SERVICE_APP_ID }}
         AZURE_SERVICE_PASSWORD: ${{ secrets.AZURE_SERVICE_PASSWORD }}
         AZURE_SERVICE_TENANT: ${{ secrets.AZURE_SERVICE_TENANT }}
-        sampleObj: $my_env_var
+        sampleObj: my_env_var
         sampleInput: 'az account show'

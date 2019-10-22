@@ -8,11 +8,11 @@ echo "val 1 is $5['abc']"
 echo "val 1 is $5[abc]"
 
 echo "login into az"
-servicePrincipalId = $2
-servicePrincipalKey = $3
-tenantId = $4
+servicePrincipalId=$2
+servicePrincipalKey=$3
+tenantId=$4
 # subscriptionId = $2[subscriptionId]
-subscriptionId = "abc"
+subscriptionId="abc"
 
 if [[ -n "$2" ]] && [[ -n "$3" ]] && [[ -n "$4" ]]
 then
