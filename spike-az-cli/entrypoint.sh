@@ -2,6 +2,11 @@
 
 echo "command is $1"
 
+echo  "dummy obj is $3"
+
+echo "val 1 is $3['abc']"
+echo "val 1 is $3[abc]"
+
 echo "login into az"
 servicePrincipalId = $2["clientId"]
 servicePrincipalKey = $2["clientSecret"]

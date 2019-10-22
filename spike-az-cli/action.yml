@@ -8,9 +8,13 @@ inputs:
     description: 'az cli command'
     required: true
     default: 'az account show'
+  sampleObj:
+    description: 'Sample object'
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - ${{ inputs.sampleInput }}
     - ${{ inputs.creds }}
+    - ${{ inputs.sampleObj }}
