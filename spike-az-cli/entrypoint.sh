@@ -8,10 +8,10 @@ echo "val 1 is $3['abc']"
 echo "val 1 is $3[abc]"
 
 echo "login into az"
-servicePrincipalId = $2["clientId"]
-servicePrincipalKey = $2["clientSecret"]
-tenantId = $2["tenantId"]
-subscriptionId = $2["subscriptionId"]
+servicePrincipalId = $2[clientId]
+servicePrincipalKey = $2[clientSecret]
+tenantId = $2[tenantId]
+subscriptionId = $2[subscriptionId]
 
 if [[ -n "$servicePrincipalId" ]] && [[ -n "$servicePrincipalKey" ]] && [[ -n "$tenantId" ]]
 then
