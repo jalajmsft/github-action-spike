@@ -18,7 +18,7 @@ jobs:
         #az webapp list --query "[?state=='Running']"
         
     - run: |
-        az account show
+        az --version
     - name: Checkout
       uses: actions/checkout@v1
     - name: Az cli spike
@@ -31,4 +31,26 @@ jobs:
         AZURE_SERVICE_PASSWORD: ${{ secrets.AZURE_SERVICE_PASSWORD }}
         AZURE_SERVICE_TENANT: ${{ secrets.AZURE_SERVICE_TENANT }}
         sampleObj: ${{ toJson(secrets.Dummy_OBJ) }}
-        sampleInput: 'az account show'
+        sampleInput: 'az --version'
+    - name: Az cli spike 2
+      #uses: ./spike-az-cli
+      uses: jalajmsft/github-action-spike/spike-az-cli@1
+      env: 
+        my_env_var: ${{ toJson(secrets.Dummy_OBJ) }}
+      with:
+        AZURE_SERVICE_APP_ID: ${{ secrets.AZURE_SERVICE_APP_ID }}
+        AZURE_SERVICE_PASSWORD: ${{ secrets.AZURE_SERVICE_PASSWORD }}
+        AZURE_SERVICE_TENANT: ${{ secrets.AZURE_SERVICE_TENANT }}
+        sampleObj: ${{ toJson(secrets.Dummy_OBJ) }}
+        sampleInput: 'az --version'
+    - name: Az cli spike 3
+      #uses: ./spike-az-cli
+      uses: jalajmsft/github-action-spike/spike-az-cli@1.1..0_cli-2.0.74
+      env: 
+        my_env_var: ${{ toJson(secrets.Dummy_OBJ) }}
+      with:
+        AZURE_SERVICE_APP_ID: ${{ secrets.AZURE_SERVICE_APP_ID }}
+        AZURE_SERVICE_PASSWORD: ${{ secrets.AZURE_SERVICE_PASSWORD }}
+        AZURE_SERVICE_TENANT: ${{ secrets.AZURE_SERVICE_TENANT }}
+        sampleObj: ${{ toJson(secrets.Dummy_OBJ) }}
+        sampleInput: 'az --version'
