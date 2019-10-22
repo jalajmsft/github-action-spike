@@ -25,5 +25,5 @@ jobs:
       uses: ./spike-az-cli
       with:
         creds: ${{ secrets.Azure_cred_login_obj }}
-        creds: ${{ secrets.Dummy_OBJ }}
+        sampleObj: ${{ secrets.Dummy_OBJ }}
         sampleInput: 'az account show'
