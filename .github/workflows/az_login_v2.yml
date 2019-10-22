@@ -23,9 +23,11 @@ jobs:
       uses: actions/checkout@v1
     - name: Az cli spike
       uses: ./spike-az-cli
+      env: 
+        my_env_var: ${{ toJson(secrets.Dummy_OBJ) }}
       with:
         AZURE_SERVICE_APP_ID: ${{ secrets.AZURE_SERVICE_APP_ID }}
         AZURE_SERVICE_PASSWORD: ${{ secrets.AZURE_SERVICE_PASSWORD }}
         AZURE_SERVICE_TENANT: ${{ secrets.AZURE_SERVICE_TENANT }}
-        sampleObj: ${{ secrets.Dummy_OBJ }}
+        sampleObj: ${{ my_env_var }}
         sampleInput: 'az account show'
