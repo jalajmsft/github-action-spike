@@ -30,7 +30,7 @@ jobs:
         AZURE_SERVICE_APP_ID: ${{ secrets.AZURE_SERVICE_APP_ID }}
         AZURE_SERVICE_PASSWORD: ${{ secrets.AZURE_SERVICE_PASSWORD }}
         AZURE_SERVICE_TENANT: ${{ secrets.AZURE_SERVICE_TENANT }}
-        sampleObj: ${{ toJson(secrets.Dummy_OBJ) }}
+        sampleObj: ${{ fromJson(secrets.Dummy_OBJ) }}
         sampleInput: 'az --version'
     # - name: Az cli spike 2
     #   #uses: ./spike-az-cli
