@@ -23,7 +23,7 @@ jobs:
       uses: actions/checkout@v1
     - name: Az cli spike
       #uses: ./spike-az-cli
-      uses: jalajmsft/github-action-spike/spike-az-cli@1.0.0_cli-2.0.74
+      uses: jalajmsft/github-action-spike/spike-az-cli@1
       env: 
         my_env_var: ${{ toJson(secrets.Dummy_OBJ) }}
       with:
