@@ -11,7 +11,7 @@ async function run() {
     
     
     //console.log(stdout);
-    await exec.exec(`"${bash}"`, ['docker run mcr.microsoft.com/azure-cli:2.0.69 az --version'], {'cwd':'./lib'});
+    await exec.exec(`docker run mcr.microsoft.com/azure-cli:2.0.69 az --version`);
     // await exec.exec(`"${bash}"`, ['sample.sh'], {'cwd':'./lib'});
 
     const nameToGreet = core.getInput('who-to-greet');
