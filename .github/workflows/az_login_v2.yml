@@ -1,6 +1,6 @@
 # File: .github/workflows/az_login_v2.yml
 
-on: [push]
+#on: [push]
 
 name: AzureLoginSample
 

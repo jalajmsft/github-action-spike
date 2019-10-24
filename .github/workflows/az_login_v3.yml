@@ -1,0 +1,34 @@
+# File: .github/workflows/az_login_v2.yml
+
+on: [push]
+
+name: AzureCLIAction
+
+jobs:
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: azure/actions/login@v1
+      with:
+        creds: ${{ secrets.Azure_cred_login_obj }}
+
+    - run: |
+        #az webapp list --query "[?state=='Running']"
+
+    - run: |
+        az --version
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Az cli spike
+      #uses: ./spike-az-cli
+      uses: jalajmsft/github-action-spike/spike-az-cli_2
+      env: 
+        my_env_var: ${{ toJson(secrets.Dummy_OBJ) }}
+      with:
+        AZURE_SERVICE_APP_ID: ${{ secrets.AZURE_SERVICE_APP_ID }}
+        AZURE_SERVICE_PASSWORD: ${{ secrets.AZURE_SERVICE_PASSWORD }}
+        AZURE_SERVICE_TENANT: ${{ secrets.AZURE_SERVICE_TENANT }}
+        sampleObj: ${{ toJson(secrets.Dummy_OBJ) }}
+        sampleInput: 'az --version'

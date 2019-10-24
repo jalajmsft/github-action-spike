@@ -1,0 +1,22 @@
+name: 'azcli'
+description: 'Az cli spike'
+inputs:
+  # creds:
+  #   description: 'Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS'
+  #   required: false
+  sampleInput:  # id of input
+    description: 'az cli command'
+    required: true
+    default: 'az account show'
+  sampleObj:
+    description: 'Sample object'
+    required: false
+  # AZURE_SERVICE_APP_ID:
+  #   required: true
+  # AZURE_SERVICE_PASSWORD:
+  #   required: true
+  # AZURE_SERVICE_TENANT:
+  #   required: true
+runs:
+  using: 'node12'
+  main: 'lib/init.js'
