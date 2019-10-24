@@ -16,9 +16,9 @@ async function run() {
           errStream: <stream.Writable>process.stderr
          };
         // throwIfError(execSync("az", "--version", option));
-        throwIfError(execSync("docker", "run mcr.microsoft.com/azure-cli:2.0.69 az --version", option));
+        throwIfError(execSync("docker", "run -i mcr.microsoft.com/azure-cli:2.0.69 az --version", option));
         // throwIfError(execSync("az", "account set --subscription \"" + subscriptionId + "\"", option));
-        console.log("successful.");    
+        console.log("successful.");
       } catch (error) {
         console.log("please cehck the command.", error);
         core.setFailed(error);
@@ -35,6 +35,10 @@ function throwIfError(resultOfToolExecution: IExecSyncResult, errormsg?: string)
           core.error("Error: " + errormsg);
         }
         throw resultOfToolExecution;
+    }
+    else{
+        console.log("success...", resultOfToolExecution.stdout);
+
     }
   }
 
