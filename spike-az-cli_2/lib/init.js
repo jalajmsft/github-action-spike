@@ -27,7 +27,7 @@ function run() {
                 outStream: process.stdout,
                 errStream: process.stderr
             };
-            throwIfError(utility_1.execSync("sh", "pwd", option));
+            throwIfError(utility_1.execSync("az", "--version", option));
             // throwIfError(execSync("bash", "docker run mcr.microsoft.com/azure-cli:2.0.69 az --version", option));
             // throwIfError(execSync("az", "account set --subscription \"" + subscriptionId + "\"", option));
             console.log("successful.");
