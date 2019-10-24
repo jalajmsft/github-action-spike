@@ -19,6 +19,8 @@ jobs:
 
     - run: |
         az --version
+    - run : |
+        docker run mcr.microsoft.com/azure-cli:2.0.69 az --version
     - name: Checkout
       uses: actions/checkout@v1
     - name: Az cli spike
