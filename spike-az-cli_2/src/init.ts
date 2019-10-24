@@ -6,7 +6,6 @@ import stream = require('stream');
 async function run() {
 
     try{
-        throwIfError(execSync("az", "--version"));
         let sampleInput = core.getInput('sampleInput', { required: true });
         
         console.log(sampleInput);
