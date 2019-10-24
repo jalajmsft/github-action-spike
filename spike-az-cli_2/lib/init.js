@@ -20,7 +20,6 @@ const utility_1 = require("./utility");
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            throwIfError(utility_1.execSync("az", "--version"));
             let sampleInput = core.getInput('sampleInput', { required: true });
             console.log(sampleInput);
             let option = {
