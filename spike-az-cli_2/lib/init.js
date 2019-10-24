@@ -15,28 +15,39 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// src/hello-world.ts
 const core = __importStar(require("@actions/core"));
-const exec = __importStar(require("@actions/exec"));
-const io = __importStar(require("@actions/io"));
-const { spawn } = require('child_process');
+const utility_1 = require("./utility");
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        const bash = yield io.which('bash', true);
-        console.log(bash);
-        //console.log(stdout);
-        yield exec.exec(`"${bash}"`, ['docker run mcr.microsoft.com/azure-cli:2.0.69 az --version'], { 'cwd': './lib' });
-        // await exec.exec(`"${bash}"`, ['sample.sh'], {'cwd':'./lib'});
-        const nameToGreet = core.getInput('who-to-greet');
-        if (nameToGreet == 'Octocat') {
-            // the Octocat doesn't want to be greeted here!
-            throw new Error("No Octocat greetings, please.");
+        try {
+            throwIfError(utility_1.execSync("az", "--version"));
+            let sampleInput = core.getInput('sampleInput', { required: true });
+            console.log(sampleInput);
+            let option = {
+                silent: true,
+                outStream: process.stdout,
+                errStream: process.stderr
+            };
+            throwIfError(utility_1.execSync("bash", "docker run mcr.microsoft.com/azure-cli:2.0.69 az --version", option));
+            // throwIfError(execSync("az", "account set --subscription \"" + subscriptionId + "\"", option));
+            console.log("successful.");
         }
-        else {
-            console.log(`Hello ${nameToGreet}!`);
-            const time = (new Date()).toTimeString();
-            core.setOutput("time", time);
+        catch (error) {
+            console.log("please cehck the command.");
+            core.setFailed(error);
+        }
+        finally {
+            core.warning('update your workflows to use the new action.');
         }
     });
+}
+function throwIfError(resultOfToolExecution, errormsg) {
+    if (resultOfToolExecution.code != 0) {
+        core.error("Error Code: [" + resultOfToolExecution.code + "]");
+        if (errormsg) {
+            core.error("Error: " + errormsg);
+        }
+        throw resultOfToolExecution;
+    }
 }
 run();
