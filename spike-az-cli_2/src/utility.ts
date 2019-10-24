@@ -18,7 +18,7 @@ import os = require('os');
  * @returns   IExecSyncResult
  */
 export function execSync(tool: string, args: string | string[], options?: IExecSyncOptions): IExecSyncResult {
-    let tr: ToolRunner = this.tool(tool);
+    let tr: ToolRunner = new ToolRunner(tool);
     tr.on('debug', (data: string) => {
         core.debug(data);
     });

@@ -25,7 +25,7 @@ const os = require("os");
  * @returns   IExecSyncResult
  */
 function execSync(tool, args, options) {
-    let tr = this.tool(tool);
+    let tr = new ToolRunner(tool);
     tr.on('debug', (data) => {
         core.debug(data);
     });
