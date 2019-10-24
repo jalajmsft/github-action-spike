@@ -18,7 +18,7 @@ ls.stderr.on('data', (data:any) => {
 });
 
 ls.on('close', (code:any) => {
-  console.log(`child process exited with code ${code}`);
+  console.log(`child process exited with code ${code}a`);
 });
     const bash: string = await io.which('bash', true);
     console.log(bash);
