@@ -19,7 +19,7 @@ async function run() {
         // throwIfError(execSync("az", "account set --subscription \"" + subscriptionId + "\"", option));
         console.log("successful.");    
       } catch (error) {
-        console.log("please cehck the command.");
+        console.log("please cehck the command.", error);
         core.setFailed(error);
       }
       finally {
