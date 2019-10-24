@@ -32,7 +32,7 @@ function run() {
             console.log("successful.");
         }
         catch (error) {
-            console.log("please cehck the command.");
+            console.log("please cehck the command.", error);
             core.setFailed(error);
         }
         finally {
