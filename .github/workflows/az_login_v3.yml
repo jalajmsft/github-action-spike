@@ -18,6 +18,8 @@ jobs:
         printenv
     - name: Checkout
       uses: actions/checkout@v1
+    - run : |
+        sampleScript.sh
     - name: Az cli spike
       uses: ./spike-az-cli_2
       with:
