@@ -19,7 +19,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
     - run : |
-        sampleScript.sh
+        ./sampleScript.sh
     - name: Az cli spike
       uses: ./spike-az-cli_2
       with:
