@@ -28,9 +28,10 @@ function run() {
                 outStream: process.stdout,
                 errStream: process.stderr
             };
+            console.log("log env", process.env);
             let dockerCommand = `run -i --workdir /github/workspace -e GITHUB_WORKSPACE -v GITHUB_WORKSPACE:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
             if (scriptPath) {
-                dockerCommand += ` bash -c ${GITHUB_WORKSPACE}/${scriptPath}`;
+                dockerCommand += ` bash -c ${process.env.GITHUB_WORKSPACE}/${scriptPath}`;
             }
             else if (inlineScript) {
                 dockerCommand += ` bash -c \"${inlineScript}\"`;
