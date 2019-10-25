@@ -21,7 +21,7 @@ async function run() {
           errStream: <stream.Writable>process.stderr
         };
         console.log("log env", process.env);
-        let dockerCommand = `run -i --workdir /github/workspace -e GITHUB_WORKSPACE -e RUNNER_WORKSPACE -v RUNNER_WORKSPACE:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
+        let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
         if (scriptPath){
             dockerCommand += ` bash /github/workspace/${scriptPath}`;
         }
