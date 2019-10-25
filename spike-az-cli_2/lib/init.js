@@ -18,8 +18,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const exec = __importStar(require("@actions/exec"));
 const io = __importStar(require("@actions/io"));
-var azPath;
-var bashPath;
+var dockerPath;
+// var bashPath: string;
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -30,8 +30,8 @@ function run() {
                 core.warning('Please use Linux as a runner.');
                 return;
             }
-            azPath = yield io.which("az", true);
-            bashPath = yield io.which("bash", true);
+            dockerPath = yield io.which("docker", true);
+            // bashPath = await io.which("bash", true);
             // let option: IExecSyncOptions = {
             //   silent:true, 
             //   outStream: <stream.Writable>process.stdout,
@@ -40,7 +40,7 @@ function run() {
             console.log("log env", process.env);
             let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
             if (scriptPath) {
-                yield executeCommand(`chmod +x ${scriptPath}`, bashPath);
+                yield executeCommand(`chmod +x ${scriptPath}`);
                 dockerCommand += ` bash /github/workspace/${scriptPath}`;
             }
             else if (inlineScript) {
@@ -49,7 +49,7 @@ function run() {
             console.log(dockerCommand);
             // throwIfError(execSync("docker", "run -i -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:2.0.69 bash -c \"az account show; az --version\"", option));
             // throwIfError(execSync("docker", dockerCommand));
-            yield executeCommand(dockerCommand, azPath);
+            yield executeCommand(dockerCommand, dockerPath);
             console.log("az script ran successfully.");
         }
         catch (error) {
@@ -58,10 +58,13 @@ function run() {
         }
     });
 }
-function executeCommand(command, toolPath = bashPath) {
+function executeCommand(command, toolPath) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield exec.exec(`"${toolPath}" ${command}`, [], {});
+            if (toolPath) {
+                command = `"${toolPath}" ${command}`;
+            }
+            yield exec.exec(command, [], {});
         }
         catch (error) {
             throw new Error(error);

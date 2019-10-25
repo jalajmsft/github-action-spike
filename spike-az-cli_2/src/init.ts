@@ -2,8 +2,8 @@ import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as io from '@actions/io';
 
-var azPath: string;
-var bashPath: string;
+var dockerPath: string;
+// var bashPath: string;
 
 async function run() {
 
@@ -16,8 +16,8 @@ async function run() {
             core.warning('Please use Linux as a runner.');
             return;
         }
-        azPath = await io.which("az", true);
-        bashPath = await io.which("bash", true);
+        dockerPath = await io.which("docker", true);
+        // bashPath = await io.which("bash", true);
         // let option: IExecSyncOptions = {
         //   silent:true, 
         //   outStream: <stream.Writable>process.stdout,
@@ -26,7 +26,7 @@ async function run() {
         console.log("log env", process.env);
         let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
         if (scriptPath){
-            await executeCommand(`chmod +x ${scriptPath}`, bashPath);
+            await executeCommand(`chmod +x ${scriptPath}`);
             dockerCommand += ` bash /github/workspace/${scriptPath}`;
         }
         else if (inlineScript){
@@ -35,7 +35,7 @@ async function run() {
         console.log(dockerCommand);
         // throwIfError(execSync("docker", "run -i -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:2.0.69 bash -c \"az account show; az --version\"", option));
         // throwIfError(execSync("docker", dockerCommand));
-        await executeCommand(dockerCommand, azPath);
+        await executeCommand(dockerCommand, dockerPath);
         console.log("az script ran successfully.");
       } catch (error) {
         console.log("az script failed, Please check the script.", error);
@@ -44,9 +44,12 @@ async function run() {
 }
 
 
-async function executeCommand(command: string, toolPath:string = bashPath) {
+async function executeCommand(command: string, toolPath?:string) {
     try {
-        await exec.exec(`"${toolPath}" ${command}`, [],  {}); 
+        if(toolPath){
+            command = `"${toolPath}" ${command}`;
+        }
+        await exec.exec(command, [],  {}); 
     }
     catch(error) {
         throw new Error(error);
