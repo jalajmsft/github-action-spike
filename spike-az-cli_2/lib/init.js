@@ -23,27 +23,24 @@ function run() {
             let inlineScript = core.getInput('inlineScript');
             let scriptPath = core.getInput('scriptPath');
             let azcliversion = core.getInput('azcliversion');
-            console.log("script path = ", scriptPath);
-            console.log("inline script = ", inlineScript);
-            console.log("azcliversion = ", azcliversion);
             let option = {
                 silent: true,
                 outStream: process.stdout,
                 errStream: process.stderr
             };
-            let dockerCommand = `run -i -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
+            let dockerCommand = `run -i --workdir /github/workspace -e GITHUB_WORKSPACE -v GITHUB_WORKSPACE:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
             if (scriptPath) {
                 dockerCommand += '';
             }
             else if (inlineScript) {
-                dockerCommand += `bash -c \"${inlineScript}\"`;
+                dockerCommand += ` bash -c \"${inlineScript}\"`;
             }
             // throwIfError(execSync("docker", "run -i -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:2.0.69 bash -c \"az account show; az --version\"", option));
             throwIfError(utility_1.execSync("docker", dockerCommand));
             console.log("successful.");
         }
         catch (error) {
-            console.log("please cehck the command.", error);
+            console.log("please check the command.", error);
             core.setFailed(error);
         }
         finally {
