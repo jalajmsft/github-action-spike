@@ -18,17 +18,18 @@ async function run() {
 
         let dockerCommand = `run -i --workdir /github/workspace -e GITHUB_WORKSPACE -v GITHUB_WORKSPACE:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
         if (scriptPath){
-            dockerCommand += ` bash -c ${scriptPath}`;
+            dockerCommand += ` bash -c ${GITHUB_WORKSPACE}/${scriptPath}`;
         }
         else if (inlineScript){
             dockerCommand += ` bash -c \"${inlineScript}\"`;
         }
+        console.log(dockerCommand);
         // throwIfError(execSync("docker", "run -i -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:2.0.69 bash -c \"az account show; az --version\"", option));
         throwIfError(execSync("docker", dockerCommand));
         console.log("successful.");
       } catch (error) {
         console.log("please check the command.", error);
-        core.setFailed(error);
+        core.setFailed(error.stderr);
       }
       finally {
         core.warning('update your workflows to use the new action.');
