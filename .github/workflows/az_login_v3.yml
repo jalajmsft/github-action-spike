@@ -16,14 +16,12 @@ jobs:
 
     - run: |
         printenv
-    - run: |
-        ls
     - name: Checkout
       uses: actions/checkout@v1
     - name: Az cli spike
       uses: ./spike-az-cli_2
       with:
-        inlineScript: 'az account show | az --version'
+        inlineScript: 'az account show ; az --version;pwd;ls'
     - run: |
         pwd
     - run: |
