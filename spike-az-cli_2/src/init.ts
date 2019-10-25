@@ -18,11 +18,7 @@ async function run() {
         }
         dockerPath = await io.which("docker", true);
         // bashPath = await io.which("bash", true);
-        // let option: IExecSyncOptions = {
-        //   silent:true, 
-        //   outStream: <stream.Writable>process.stdout,
-        //   errStream: <stream.Writable>process.stderr
-        // };
+        
         console.log("log env", process.env);
         let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
         if (scriptPath){
@@ -55,16 +51,5 @@ async function executeCommand(command: string, toolPath?:string) {
         throw new Error(error);
     }
 }
-
-
-// function throwIfError(resultOfToolExecution: IExecSyncResult, errormsg?: string) {
-//     if (resultOfToolExecution.code != 0) {
-//         core.error("Error Code: [" + resultOfToolExecution.code + "]");
-//         if (errormsg) {
-//           core.error("Error: " + errormsg);
-//         }
-//         throw resultOfToolExecution;
-//     }
-//   }
 
 run();
