@@ -17,15 +17,7 @@ jobs:
     - run: |
         printenv
     - run: |
-        pwd |
         ls
-    - run: |
-        yum install tree
-        tree GITHUB_REPOSITORY
-    - run: |
-        tree GITHUB_WORKSPACE
-    - run: |
-        tree HOME
     - name: Checkout
       uses: actions/checkout@v1
     - name: Az cli spike
