@@ -18,7 +18,7 @@ async function run() {
 
         let dockerCommand = `run -i --workdir /github/workspace -e GITHUB_WORKSPACE -v GITHUB_WORKSPACE:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
         if (scriptPath){
-            dockerCommand += '';
+            dockerCommand += ` bash -c ${scriptPath}`;
         }
         else if (inlineScript){
             dockerCommand += ` bash -c \"${inlineScript}\"`;
