@@ -15,10 +15,9 @@ jobs:
         creds: ${{ secrets.Azure_cred_login_obj }}
 
     - run: |
-        #az webapp list --query "[?state=='Running']"
         printenv
     - run: |
-        pwd
+        pwd |
         ls
     - run: |
         yum install tree
