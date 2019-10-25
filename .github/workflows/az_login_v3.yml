@@ -13,9 +13,6 @@ jobs:
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.Azure_cred_login_obj }}
-
-    - run: |
-        printenv
     - name: Checkout
       uses: actions/checkout@v1
     - run : |
@@ -27,4 +24,4 @@ jobs:
         inlineScript: 'az account show ; az --version;pwd;ls'
         scriptPath: 'sampleScript.sh'
     - run: |
-        docker run -i --workdir /github/workspace -v /home/runner/work/github-action-spike/github-action-spike/:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli /home/runner/work/github-action-spike/github-action-spike/sampleScript.sh
+        docker run -i --workdir /github/workspace -v /home/runner/work/github-action-spike/github-action-spike/:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli bash /home/runner/work/github-action-spike/github-action-spike/sampleScript.sh

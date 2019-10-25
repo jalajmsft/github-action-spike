@@ -33,10 +33,10 @@ function run() {
             let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
             if (scriptPath) {
                 yield executeCommand(`chmod +x ${scriptPath}`);
-                dockerCommand += ` /github/workspace/${scriptPath}`;
+                dockerCommand += ` bash /github/workspace/${scriptPath}`;
             }
             else if (inlineScript) {
-                dockerCommand += ` \"${inlineScript}\"`;
+                dockerCommand += ` bash -c \"${inlineScript}\"`;
             }
             yield executeCommand(dockerCommand, dockerPath);
             console.log("az script ran successfully.");
