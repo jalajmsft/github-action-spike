@@ -19,7 +19,9 @@ jobs:
         printenv
     - run: |
         pwd
+        ls
     - run: |
+        yum install tree
         tree GITHUB_REPOSITORY
     - run: |
         tree GITHUB_WORKSPACE
