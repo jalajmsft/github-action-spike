@@ -19,7 +19,6 @@ const core = __importStar(require("@actions/core"));
 const exec = __importStar(require("@actions/exec"));
 const io = __importStar(require("@actions/io"));
 var dockerPath;
-// var bashPath: string;
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -31,24 +30,14 @@ function run() {
                 return;
             }
             dockerPath = yield io.which("docker", true);
-            // bashPath = await io.which("bash", true);
-            // let option: IExecSyncOptions = {
-            //   silent:true, 
-            //   outStream: <stream.Writable>process.stdout,
-            //   errStream: <stream.Writable>process.stderr
-            // };
-            console.log("log env", process.env);
             let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
             if (scriptPath) {
                 yield executeCommand(`chmod +x ${scriptPath}`);
-                dockerCommand += ` bash /github/workspace/${scriptPath}`;
+                dockerCommand += ` /github/workspace/${scriptPath}`;
             }
             else if (inlineScript) {
-                dockerCommand += ` bash -c \"${inlineScript}\"`;
+                dockerCommand += ` \"${inlineScript}\"`;
             }
-            console.log(dockerCommand);
-            // throwIfError(execSync("docker", "run -i -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:2.0.69 bash -c \"az account show; az --version\"", option));
-            // throwIfError(execSync("docker", dockerCommand));
             yield executeCommand(dockerCommand, dockerPath);
             console.log("az script ran successfully.");
         }
@@ -71,13 +60,4 @@ function executeCommand(command, toolPath) {
         }
     });
 }
-// function throwIfError(resultOfToolExecution: IExecSyncResult, errormsg?: string) {
-//     if (resultOfToolExecution.code != 0) {
-//         core.error("Error Code: [" + resultOfToolExecution.code + "]");
-//         if (errormsg) {
-//           core.error("Error: " + errormsg);
-//         }
-//         throw resultOfToolExecution;
-//     }
-//   }
 run();

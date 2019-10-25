@@ -20,10 +20,10 @@ async function run() {
         let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
         if (scriptPath){
             await executeCommand(`chmod +x ${scriptPath}`);
-            dockerCommand += ` bash /github/workspace/${scriptPath}`;
+            dockerCommand += ` /github/workspace/${scriptPath}`;
         }
         else if (inlineScript){
-            dockerCommand += ` bash -c \"${inlineScript}\"`;
+            dockerCommand += ` \"${inlineScript}\"`;
         }
         await executeCommand(dockerCommand, dockerPath);
         console.log("az script ran successfully.");
