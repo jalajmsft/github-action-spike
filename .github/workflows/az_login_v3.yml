@@ -22,4 +22,4 @@ jobs:
       uses: ./spike-az-cli_2
       with:
         inlineScript: 'az account show ; az --version;pwd;ls'
-        scriptPath: './sampleScript.sh'
+        scriptPath: 'sampleScript.sh'
