@@ -23,13 +23,17 @@ function run() {
             let inlineScript = core.getInput('inlineScript');
             let scriptPath = core.getInput('scriptPath');
             let azcliversion = core.getInput('azcliversion');
+            if (process.env.RUNNER_OS != 'Linux') {
+                core.warning('Please use Linux as a runner.');
+                return;
+            }
             let option = {
                 silent: true,
                 outStream: process.stdout,
                 errStream: process.stderr
             };
             console.log("log env", process.env);
-            let dockerCommand = `run -i --workdir /github/workspace -e GITHUB_WORKSPACE -v GITHUB_WORKSPACE:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
+            let dockerCommand = `run -i --workdir /github/workspace -e GITHUB_WORKSPACE -e RUNNER_WORKSPACE -e HOME -v RUNNER_WORKSPACE:/github/workspace -v HOME/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
             if (scriptPath) {
                 dockerCommand += ` bash /github/workspace/${scriptPath}`;
             }
