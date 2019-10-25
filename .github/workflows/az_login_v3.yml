@@ -18,9 +18,9 @@ jobs:
         printenv
     - name: Checkout
       uses: actions/checkout@v1
-    - run : |
-        chmod +x ./sampleScript.sh
-        ./sampleScript.sh
+    # - run : |
+    #     chmod +x ./sampleScript.sh
+    #     ./sampleScript.sh
     - name: Az cli spike
       uses: ./spike-az-cli_2
       with:

@@ -1,2 +1,2 @@
-az --version
+az --version;
 az account show
