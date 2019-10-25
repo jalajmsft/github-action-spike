@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: azure/actions/login@v1
+    - uses: azure/login@v1
       with:
         creds: ${{ secrets.Azure_cred_login_obj }}
 
@@ -22,11 +22,3 @@ jobs:
       uses: ./spike-az-cli_2
       with:
         inlineScript: 'az account show ; az --version;pwd;ls'
-    - run: |
-        pwd
-    - run: |
-        tree GITHUB_REPOSITORY
-    - run: |
-        tree GITHUB_WORKSPACE
-    - run: |
-        tree HOME
