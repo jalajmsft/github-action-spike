@@ -3,7 +3,6 @@ import * as exec from '@actions/exec';
 import * as io from '@actions/io';
 
 var dockerPath: string;
-// var bashPath: string;
 
 async function run() {
 
@@ -17,9 +16,7 @@ async function run() {
             return;
         }
         dockerPath = await io.which("docker", true);
-        // bashPath = await io.which("bash", true);
-        
-        console.log("log env", process.env);
+ 
         let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
         if (scriptPath){
             await executeCommand(`chmod +x ${scriptPath}`);
@@ -28,9 +25,6 @@ async function run() {
         else if (inlineScript){
             dockerCommand += ` bash -c \"${inlineScript}\"`;
         }
-        console.log(dockerCommand);
-        // throwIfError(execSync("docker", "run -i -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:2.0.69 bash -c \"az account show; az --version\"", option));
-        // throwIfError(execSync("docker", dockerCommand));
         await executeCommand(dockerCommand, dockerPath);
         console.log("az script ran successfully.");
       } catch (error) {
