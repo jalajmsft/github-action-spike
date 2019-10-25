@@ -20,16 +20,26 @@ const utility_1 = require("./utility");
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let sampleInput = core.getInput('sampleInput', { required: true });
-            console.log(sampleInput);
+            let inlineScript = core.getInput('inlineScript');
+            let scriptPath = core.getInput('scriptPath');
+            let azcliversion = core.getInput('azcliversion');
+            console.log("script path = ", scriptPath);
+            console.log("inline script = ", inlineScript);
+            console.log("azcliversion = ", azcliversion);
             let option = {
                 silent: true,
                 outStream: process.stdout,
                 errStream: process.stderr
             };
-            // throwIfError(execSync("az", "--version", option));
-            throwIfError(utility_1.execSync("docker", "run -i -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:2.0.69 bash -c \"az account show; az --version\"", option));
-            // throwIfError(execSync("az", "account set --subscription \"" + subscriptionId + "\"", option));
+            let dockerCommand = `run -i -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
+            if (scriptPath) {
+                dockerCommand += '';
+            }
+            else if (inlineScript) {
+                dockerCommand += `bash -c \"${inlineScript}\"`;
+            }
+            // throwIfError(execSync("docker", "run -i -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:2.0.69 bash -c \"az account show; az --version\"", option));
+            throwIfError(utility_1.execSync("docker", dockerCommand));
             console.log("successful.");
         }
         catch (error) {

@@ -16,21 +16,26 @@ jobs:
 
     - run: |
         #az webapp list --query "[?state=='Running']"
-
+        printenv
     - run: |
-        az --version
-    # - run : |
-    #     docker run mcr.microsoft.com/azure-cli:2.0.69 az --version 
+        pwd
+    - run: |
+        tree GITHUB_REPOSITORY
+    - run: |
+        tree GITHUB_WORKSPACE
+    - run: |
+        tree HOME
     - name: Checkout
       uses: actions/checkout@v1
     - name: Az cli spike
-      #uses: ./spike-az-cli
       uses: ./spike-az-cli_2
-      env: 
-        my_env_var: ${{ toJson(secrets.Dummy_OBJ) }}
       with:
-        # AZURE_SERVICE_APP_ID: ${{ secrets.AZURE_SERVICE_APP_ID }}
-        # AZURE_SERVICE_PASSWORD: ${{ secrets.AZURE_SERVICE_PASSWORD }}
-        # AZURE_SERVICE_TENANT: ${{ secrets.AZURE_SERVICE_TENANT }}
-        # sampleObj: ${{ toJson(secrets.Dummy_OBJ) }}
-        sampleInput: 'az --version'
+        inlineScript: 'az account show | az --version'
+    - run: |
+        pwd
+    - run: |
+        tree GITHUB_REPOSITORY
+    - run: |
+        tree GITHUB_WORKSPACE
+    - run: |
+        tree HOME
