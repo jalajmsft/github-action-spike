@@ -1,3 +1,0 @@
-ls
-pwd
-az --version

@@ -18,11 +18,13 @@ jobs:
         printenv
     - name: Checkout
       uses: actions/checkout@v1
-    # - run : |
-    #     chmod +x ./sampleScript.sh
-    #     ./sampleScript.sh
+    - run : |
+        chmod +x ./sampleScript.sh
+        ./sampleScript.sh
     - name: Az cli spike
       uses: ./spike-az-cli_2
       with:
         inlineScript: 'az account show ; az --version;pwd;ls'
         scriptPath: 'sampleScript.sh'
+    run: |
+        docker run -i --workdir /github/workspace -v /home/runner/work/github-action-spike/github-action-spike/:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli /home/runner/work/github-action-spike/github-action-spike/sampleScript.sh
