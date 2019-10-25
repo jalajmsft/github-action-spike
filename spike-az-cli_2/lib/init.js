@@ -33,7 +33,7 @@ function run() {
                 errStream: process.stderr
             };
             console.log("log env", process.env);
-            let dockerCommand = `run -i --workdir /github/workspace -e GITHUB_WORKSPACE -e RUNNER_WORKSPACE -e HOME -v RUNNER_WORKSPACE:/github/workspace -v HOME/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
+            let dockerCommand = `run -i --workdir /github/workspace -e GITHUB_WORKSPACE -e RUNNER_WORKSPACE -v RUNNER_WORKSPACE:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
             if (scriptPath) {
                 dockerCommand += ` bash /github/workspace/${scriptPath}`;
             }
