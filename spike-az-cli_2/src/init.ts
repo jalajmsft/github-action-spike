@@ -27,9 +27,9 @@ async function run() {
             dockerCommand += ` bash /github/workspace/${scriptPath}`;
         }
         else if (inlineScript){
-            const fileName = getScriptFileName();
-            fs.writeFileSync(path.join(fileName), `#!/bin/bash \n\n set -eo \n ${inlineScript}`);
-            await executeCommand(`chmod +x ${fileName}`);
+            const {fileName, fullPath} = getScriptFileName();
+            fs.writeFileSync(path.join(fullPath), `#!/bin/bash \n\n set -eo \n ${inlineScript}`);
+            await executeCommand(`chmod +x ${fullPath}`);
             dockerCommand += ` bash /github/_temp/${fileName}`;
             // dockerCommand += ` bash -c \"${inlineScript.replace(/"/g, '\\\"')}\"`;
         }
@@ -42,10 +42,10 @@ async function run() {
 }
 
 function getScriptFileName() {
-    const filePath:string = 'AZ_CLI_GITHUB_ACTION_' + getCurrentTime().toString();
+    const fileName:string = 'AZ_CLI_GITHUB_ACTION_' + getCurrentTime().toString();
     const tempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
-    const fileName = path.join(tempDirectory, path.basename(filePath));
-    return fileName;
+    const fullPath = path.join(tempDirectory, path.basename(fileName));
+    return { fileName, fullPath};
 }
 
 

@@ -20,6 +20,7 @@ const exec = __importStar(require("@actions/exec"));
 const io = __importStar(require("@actions/io"));
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
+const os = __importStar(require("os"));
 const utils_1 = require("./utils");
 var dockerPath;
 function run() {
@@ -33,15 +34,15 @@ function run() {
                 return;
             }
             dockerPath = yield io.which("docker", true);
-            let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.RUNNER_TEMP}:/github/_temp -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
+            let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.RUNNER_TEMP || os.tmpdir()}:/github/_temp -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
             if (scriptPath) {
                 yield executeCommand(`chmod +x ${scriptPath}`);
                 dockerCommand += ` bash /github/workspace/${scriptPath}`;
             }
             else if (inlineScript) {
-                const fileName = getScriptFileName();
-                fs.writeFileSync(path.join(fileName), `#!/bin/bash \n\n set -eo \n ${inlineScript}`);
-                yield executeCommand(`chmod +x ${fileName}`);
+                const { fileName, fullPath } = getScriptFileName();
+                fs.writeFileSync(path.join(fullPath), `#!/bin/bash \n\n set -eo \n ${inlineScript}`);
+                yield executeCommand(`chmod +x ${fullPath}`);
                 dockerCommand += ` bash /github/_temp/${fileName}`;
                 // dockerCommand += ` bash -c \"${inlineScript.replace(/"/g, '\\\"')}\"`;
             }
@@ -55,10 +56,10 @@ function run() {
     });
 }
 function getScriptFileName() {
-    const filePath = 'AZ_CLI_GITHUB_ACTION_' + utils_1.getCurrentTime().toString();
-    const tempDirectory = process.env.RUNNER_TEMP;
-    const fileName = path.join(tempDirectory, path.basename(filePath));
-    return fileName;
+    const fileName = 'AZ_CLI_GITHUB_ACTION_' + utils_1.getCurrentTime().toString();
+    const tempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
+    const fullPath = path.join(tempDirectory, path.basename(fileName));
+    return { fileName, fullPath };
 }
 function executeCommand(command, toolPath) {
     return __awaiter(this, void 0, void 0, function* () {
