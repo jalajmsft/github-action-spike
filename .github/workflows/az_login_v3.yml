@@ -28,5 +28,5 @@ jobs:
     - name: Az cli spike
       uses: ./spike-az-cli_2
       with:
-        inlineScript: 'echo "what is your name?" remark="az --version" echo "I am $remark too!" az account show'
+        inlineScript: 'echo "what is your name?"; remark="az --version"; echo "I am $remark too!"; az account show;'
         # inlineScript: 'echo "what is your name?" remark="az --version" echo "I am $remark too!" $remark az webapp list --query "[?state==\'Running\']" az account show';
