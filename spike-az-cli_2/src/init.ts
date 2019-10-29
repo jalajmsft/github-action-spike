@@ -1,6 +1,10 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as io from '@actions/io';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as os from 'os';
+import { getCurrentTime } from "./utils";
 
 var dockerPath: string;
 
@@ -17,13 +21,17 @@ async function run() {
         }
         dockerPath = await io.which("docker", true);
  
-        let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
+        let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.RUNNER_TEMP || os.tmpdir()}:/github/_temp -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
         if (scriptPath){
             await executeCommand(`chmod +x ${scriptPath}`);
             dockerCommand += ` bash /github/workspace/${scriptPath}`;
         }
         else if (inlineScript){
-            dockerCommand += ` bash -c \"${inlineScript.replace(/"/g, '\\\"')}\"`;
+            const fileName = getScriptFileName();
+            fs.writeFileSync(path.join(fileName), `#!/bin/bash \n\n set -eo \n ${inlineScript}`);
+            await executeCommand(`chmod +x ${fileName}`);
+            dockerCommand += ` bash /github/_temp/${fileName}`;
+            // dockerCommand += ` bash -c \"${inlineScript.replace(/"/g, '\\\"')}\"`;
         }
         await executeCommand(dockerCommand, dockerPath);
         console.log("az script ran successfully.");
@@ -31,6 +39,13 @@ async function run() {
         console.log("az script failed, Please check the script.", error);
         core.setFailed(error.stderr);
       }
+}
+
+function getScriptFileName() {
+    const filePath:string = 'AZ_CLI_GITHUB_ACTION_' + getCurrentTime().toString();
+    const tempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
+    const fileName = path.join(tempDirectory, path.basename(filePath));
+    return fileName;
 }
 
 
