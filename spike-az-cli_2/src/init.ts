@@ -23,7 +23,7 @@ async function run() {
             dockerCommand += ` bash /github/workspace/${scriptPath}`;
         }
         else if (inlineScript){
-            dockerCommand += ` bash -c \"${inlineScript}\"`;
+            dockerCommand += ` bash -c \"${inlineScript.replace(/"/g, '\\\"')}\"`;
         }
         await executeCommand(dockerCommand, dockerPath);
         console.log("az script ran successfully.");
