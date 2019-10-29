@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 echo "what is your name?"
 remark="az --version"
 echo "I am $remark too!"
