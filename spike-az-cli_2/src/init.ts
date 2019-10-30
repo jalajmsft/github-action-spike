@@ -22,17 +22,11 @@ const run = async () => {
         let scriptPath: string = core.getInput('scriptPath');
         let azcliversion: string = core.getInput('azcliversion');
 
-        const allVersions:any = await getAllAzCliVersions();
-        console.log(allVersions);
-        console.log("type of it is...", typeof(allVersions));
-        console.log("type of g it is...", typeof(allVersions.tags));
-        console.log("type of g1it is...",allVersions.tags[0], typeof(allVersions.tags[0]));
-        console.log("azcliversion .................", azcliversion, typeof(azcliversion));
-
-        if (!(`'${azcliversion}'` in allVersions.tags) || !(azcliversion in allVersions.tags)){
+        if(! (await checkIfValidVersion(azcliversion))){
             core.setFailed('Please enter a valid azure cli version.');
             return;
         }
+        
         var check = checkIfFileExists(scriptPath, 'sh');
         console.log("does file exist.................", check);
 
@@ -56,6 +50,22 @@ const run = async () => {
         core.setFailed(error.stderr);
     }
 };
+
+const checkIfValidVersion = async (azcliversion:string): Promise<boolean> => {
+    const allVersions:any = await getAllAzCliVersions();
+        console.log(allVersions);
+        console.log("type of it is...", typeof(allVersions));
+        console.log("type of g it is...", typeof(allVersions.tags));
+        console.log("type of g1it is...",allVersions.tags[0], typeof(allVersions.tags[0]));
+        console.log("azcliversion .................", azcliversion, typeof(azcliversion));
+
+    allVersions.tags.reverse.forEach((eachVersion:string) => {
+        if(eachVersion == azcliversion){
+            return true;
+        }
+    });
+    return false;
+}
 
 const giveExecutablePermissionsToFile = async (filePath: string) => await executeCommand(`chmod +x ${filePath}`)
 
@@ -95,6 +105,9 @@ const getAllAzCliVersions = async () => {
     console.log("out --->", outStream);
     JSON.parse(outStream).tags.forEach((element:any) => {
         console.log("ele",element);
+        if(element == '2.0.65'){
+            console.log("found");
+        }
     });
     return JSON.parse(outStream);
 }

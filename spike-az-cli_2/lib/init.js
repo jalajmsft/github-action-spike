@@ -34,13 +34,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         let inlineScript = core.getInput('inlineScript');
         let scriptPath = core.getInput('scriptPath');
         let azcliversion = core.getInput('azcliversion');
-        const allVersions = yield getAllAzCliVersions();
-        console.log(allVersions);
-        console.log("type of it is...", typeof (allVersions));
-        console.log("type of g it is...", typeof (allVersions.tags));
-        console.log("type of g1it is...", allVersions.tags[0], typeof (allVersions.tags[0]));
-        console.log("azcliversion .................", azcliversion, typeof (azcliversion));
-        if (!(`'${azcliversion}'` in allVersions.tags) || !(azcliversion in allVersions.tags)) {
+        if (!(yield checkIfValidVersion(azcliversion))) {
             core.setFailed('Please enter a valid azure cli version.');
             return;
         }
@@ -67,6 +61,20 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         console.log("az script failed, Please check the script.", error);
         core.setFailed(error.stderr);
     }
+});
+const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
+    const allVersions = yield getAllAzCliVersions();
+    console.log(allVersions);
+    console.log("type of it is...", typeof (allVersions));
+    console.log("type of g it is...", typeof (allVersions.tags));
+    console.log("type of g1it is...", allVersions.tags[0], typeof (allVersions.tags[0]));
+    console.log("azcliversion .................", azcliversion, typeof (azcliversion));
+    allVersions.tags.reverse.forEach((eachVersion) => {
+        if (eachVersion == azcliversion) {
+            return true;
+        }
+    });
+    return false;
 });
 const giveExecutablePermissionsToFile = (filePath) => __awaiter(this, void 0, void 0, function* () { return yield executeCommand(`chmod +x ${filePath}`); });
 const getScriptFileName = () => {
@@ -101,6 +109,9 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     console.log("out --->", outStream);
     JSON.parse(outStream).tags.forEach((element) => {
         console.log("ele", element);
+        if (element == '2.0.65') {
+            console.log("found");
+        }
     });
     return JSON.parse(outStream);
 });
