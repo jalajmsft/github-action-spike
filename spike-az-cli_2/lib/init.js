@@ -81,8 +81,10 @@ const executeCommand = (command, toolPath) => __awaiter(this, void 0, void 0, fu
     }
 });
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
-    var value = yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {});
-    console.log(value);
+    var outStream;
+    var value = yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], { outStream });
+    console.log("output is == >  ", value);
+    console.log("output stream is == >  ", outStream);
     return value;
 });
 const checkIfFileExists = (filePath, fileExtension) => {

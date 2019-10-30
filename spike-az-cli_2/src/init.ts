@@ -75,8 +75,10 @@ const executeCommand = async (command: string, toolPath?: string) => {
 }
 
 const getAllAzCliVersions = async () => {
-    var value = await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {});
-    console.log(value);
+    var outStream;
+    var value = await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {outStream});
+    console.log("output is == >  ",value);
+    console.log("output stream is == >  ",outStream);
     return value;
 }
 
