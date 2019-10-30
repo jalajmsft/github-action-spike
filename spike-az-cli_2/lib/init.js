@@ -33,6 +33,10 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         let inlineScript = core.getInput('inlineScript');
         let scriptPath = core.getInput('scriptPath');
         let azcliversion = core.getInput('azcliversion');
+        const allVersions = yield getAllAzCliVersions();
+        console.log(allVersions);
+        var check = checkIfFileExists(scriptPath, 'sh');
+        console.log("does file exist.................", check);
         let bashCommand = '';
         let dockerCommand = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure `;
         if (scriptPath) {
@@ -76,4 +80,15 @@ const executeCommand = (command, toolPath) => __awaiter(this, void 0, void 0, fu
         throw new Error(error);
     }
 });
+const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
+    var value = yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {});
+    console.log(value);
+    return value;
+});
+const checkIfFileExists = (filePath, fileExtension) => {
+    if (fs.existsSync(filePath) && filePath.toUpperCase().match(new RegExp(`\.${fileExtension.toUpperCase()}$`))) {
+        return true;
+    }
+    return false;
+};
 run();
