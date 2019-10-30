@@ -69,12 +69,12 @@ const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, fu
     console.log("type of g it is...", typeof (allVersions.tags));
     console.log("type of g1it is...", allVersions.tags[0], typeof (allVersions.tags[0]));
     console.log("azcliversion .................", azcliversion, typeof (azcliversion));
-    allVersions.tags.reverse().forEach((eachVersion) => {
-        if (eachVersion.trim() == azcliversion) {
-            console.log("found...");
+    for (let i = allVersions.length - 1; i >= 0; i--) {
+        if (allVersions[i].trim() === azcliversion) {
+            console.log("found..");
             return true;
         }
-    });
+    }
     console.log("not found");
     return false;
 });
