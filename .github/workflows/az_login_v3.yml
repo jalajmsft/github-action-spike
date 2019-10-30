@@ -21,7 +21,7 @@ jobs:
     - name: Az cli spike
       uses: ./spike-az-cli_2
       with:
-        azcliversion: 2.0.56
+        azcliversion: 2.0.561234
         inlineScript: 'az account show ; az --version;pwd;ls'
         scriptPath: 'sampleScript.sh'
     # - run: |
