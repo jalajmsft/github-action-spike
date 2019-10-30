@@ -21,9 +21,13 @@ const run = async () => {
         let scriptPath: string = core.getInput('scriptPath');
         let azcliversion: string = core.getInput('azcliversion');
 
-        const allVersions = await getAllAzCliVersions();
+        const allVersions:any = await getAllAzCliVersions();
         console.log(allVersions);
-
+        console.log("type of it is...", typeof(allVersions));
+        if (!(azcliversion in allVersions.tags)){
+            core.warning('Please enter a valid azure cli version.');
+            return;
+        }
         var check = checkIfFileExists(scriptPath, 'sh');
         console.log("does file exist.................", check);
 
@@ -76,10 +80,9 @@ const executeCommand = async (command: string, toolPath?: string) => {
 
 const getAllAzCliVersions = async () => {
     var outStream:string = '';
-    var value = await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {listeners:{stdout: (data: Buffer) => {console.log("writing stdout data buffer,", data);outStream += data.toString();}}});
-    console.log("output is == >  ",value);
+    var value = await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {listeners:{stdout: (data: Buffer) => outStream += data.toString()}});
     console.log("output stream is == >  ",outStream);
-    return value;
+    return outStream;
 }
 
 const checkIfFileExists = (filePath: string, fileExtension: string): boolean => {

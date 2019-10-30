@@ -35,6 +35,11 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         let azcliversion = core.getInput('azcliversion');
         const allVersions = yield getAllAzCliVersions();
         console.log(allVersions);
+        console.log("type of it is...", typeof (allVersions));
+        if (!(azcliversion in allVersions.tags)) {
+            core.warning('Please enter a valid azure cli version.');
+            return;
+        }
         var check = checkIfFileExists(scriptPath, 'sh');
         console.log("does file exist.................", check);
         let bashCommand = '';
@@ -82,10 +87,9 @@ const executeCommand = (command, toolPath) => __awaiter(this, void 0, void 0, fu
 });
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
-    var value = yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], { listeners: { stdout: (data) => { console.log("writing stdout data buffer,", data); outStream += data.toString(); } } });
-    console.log("output is == >  ", value);
+    var value = yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], { listeners: { stdout: (data) => outStream += data.toString() } });
     console.log("output stream is == >  ", outStream);
-    return value;
+    return outStream;
 });
 const checkIfFileExists = (filePath, fileExtension) => {
     if (fs.existsSync(filePath) && filePath.toUpperCase().match(new RegExp(`\.${fileExtension.toUpperCase()}$`))) {
