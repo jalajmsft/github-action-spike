@@ -52,12 +52,8 @@ const run = async () => {
 };
 
 const checkIfValidVersion = async (azcliversion:string): Promise<boolean> => {
-    const allVersions:any = await getAllAzCliVersions();
+    const allVersions: Array<string> = await getAllAzCliVersions();
         console.log(allVersions);
-        console.log("type of it is...", typeof(allVersions));
-        console.log("type of g it is...", typeof(allVersions.tags));
-        console.log("type of g1it is...",allVersions.tags[0], typeof(allVersions.tags[0]));
-        console.log("azcliversion .................", azcliversion, typeof(azcliversion));
 
     for (let i = allVersions.length-1; i>=0; i--){
         if (allVersions[i].trim() === azcliversion){
@@ -94,7 +90,7 @@ const executeCommand = async (command: string, toolPath?: string) => {
     }
 }
 
-const getAllAzCliVersions = async () => {
+const getAllAzCliVersions = async (): Promise<Array<string>> => {
     var outStream:string = '';
     await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list -s`, [], 
                 {
