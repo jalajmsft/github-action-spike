@@ -38,9 +38,9 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         console.log(allVersions);
         console.log("type of it is...", typeof (allVersions));
         console.log("type of g it is...", typeof (allVersions.tags));
-        console.log("type of g1it is...", typeof (allVersions.tags[0]));
+        console.log("type of g1it is...", allVersions.tags[0], typeof (allVersions.tags[0]));
         console.log("azcliversion .................", azcliversion, typeof (azcliversion));
-        if (!(`'${azcliversion}'` in allVersions.tags)) {
+        if (!(`'${azcliversion}'` in allVersions.tags) || !(azcliversion in allVersions.tags)) {
             core.setFailed('Please enter a valid azure cli version.');
             return;
         }
@@ -99,6 +99,9 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     });
     // await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {listeners:{stdout: (data: Buffer) => outStream += data.toString()}});
     console.log("out --->", outStream);
+    JSON.parse(outStream).tags.forEach((element) => {
+        console.log("ele", element);
+    });
     return JSON.parse(outStream);
 });
 const checkIfFileExists = (filePath, fileExtension) => {
