@@ -81,8 +81,8 @@ const executeCommand = (command, toolPath) => __awaiter(this, void 0, void 0, fu
     }
 });
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
-    var outStream;
-    var value = yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], { listeners: { stdout: (data) => { console.log("writing stdout data buffer,", data); outStream = data; } } });
+    var outStream = '';
+    var value = yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], { listeners: { stdout: (data) => { console.log("writing stdout data buffer,", data); outStream += data.toString(); } } });
     console.log("output is == >  ", value);
     console.log("output stream is == >  ", outStream);
     return value;

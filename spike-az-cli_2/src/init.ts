@@ -75,8 +75,8 @@ const executeCommand = async (command: string, toolPath?: string) => {
 }
 
 const getAllAzCliVersions = async () => {
-    var outStream;
-    var value = await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {listeners:{stdout: (data: Buffer) => {console.log("writing stdout data buffer,", data);outStream = data}}});
+    var outStream:string = '';
+    var value = await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {listeners:{stdout: (data: Buffer) => {console.log("writing stdout data buffer,", data);outStream += data.toString();}}});
     console.log("output is == >  ",value);
     console.log("output stream is == >  ",outStream);
     return value;
