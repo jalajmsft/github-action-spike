@@ -4,59 +4,64 @@ import * as io from '@actions/io';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import { getCurrentTime } from "./utils";
 
-var dockerPath: string;
+const bashArg = 'bash --noprofile --norc -eo pipefail';
+const pathToTempDirectory: string = process.env.RUNNER_TEMP || os.tmpdir();
 
-async function run() {
+const run = async () => {
 
-    try{
-        let inlineScript = core.getInput('inlineScript');
-        let scriptPath = core.getInput('scriptPath');
-        let azcliversion = core.getInput('azcliversion');
-
-        if(process.env.RUNNER_OS != 'Linux'){
-            core.warning('Please use Linux as a runner.');
+    try {
+        if (process.env.RUNNER_OS != 'Linux') {
+            core.warning('Please use Linux OS as a runner.');
             return;
         }
-        dockerPath = await io.which("docker", true);
- 
-        let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.RUNNER_TEMP || os.tmpdir()}:/github/_temp -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
-        if (scriptPath){
-            await executeCommand(`chmod +x ${scriptPath}`);
-            dockerCommand += ` bash /github/workspace/${scriptPath}`;
+        const dockerPath: string = await io.which("docker", true);
+
+        let inlineScript: string = core.getInput('inlineScript');
+        let scriptPath: string = core.getInput('scriptPath');
+        let azcliversion: string = core.getInput('azcliversion');
+        let bashCommand: string = '';
+        let dockerCommand: string = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure `;
+        if (scriptPath) {
+            await giveExecutablePermissionsToFile(scriptPath);
+            bashCommand = ` ${bashArg} /github/workspace/${scriptPath} `;
+        } else if (inlineScript) {
+            const { fileName, fullPath } = getScriptFileName();
+            fs.writeFileSync(path.join(fullPath), `${inlineScript}`);
+            await giveExecutablePermissionsToFile(fullPath);
+            dockerCommand += ` -v ${pathToTempDirectory}:/_temp `;
+            bashCommand = ` ${bashArg} /_temp/${fileName} `;
         }
-        else if (inlineScript){
-            const {fileName, fullPath} = getScriptFileName();
-            fs.writeFileSync(path.join(fullPath), `#!/bin/bash \n\n set -eo \n ${inlineScript}`);
-            await executeCommand(`chmod +x ${fullPath}`);
-            dockerCommand += ` bash /github/_temp/${fileName}`;
-            // dockerCommand += ` bash -c \"${inlineScript.replace(/"/g, '\\\"')}\"`;
-        }
+        dockerCommand += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
         await executeCommand(dockerCommand, dockerPath);
         console.log("az script ran successfully.");
-      } catch (error) {
+    } catch (error) {
         console.log("az script failed, Please check the script.", error);
         core.setFailed(error.stderr);
-      }
-}
+    }
+};
 
-function getScriptFileName() {
-    const fileName:string = 'AZ_CLI_GITHUB_ACTION_' + getCurrentTime().toString();
-    const tempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
+const giveExecutablePermissionsToFile = async (filePath: string) => await executeCommand(`chmod +x ${filePath}`)
+
+const getScriptFileName = () => {
+    const fileName: string = `AZ_CLI_GITHUB_ACTION_${getCurrentTime().toString()}.sh`;
+    const tempDirectory = pathToTempDirectory;
     const fullPath = path.join(tempDirectory, path.basename(fileName));
-    return { fileName, fullPath};
+    return { fileName, fullPath };
 }
 
+const getCurrentTime = (): number => {
+    return new Date().getTime();
+}
 
-async function executeCommand(command: string, toolPath?:string) {
+const executeCommand = async (command: string, toolPath?: string) => {
     try {
-        if(toolPath){
+        if (toolPath) {
             command = `"${toolPath}" ${command}`;
         }
-        await exec.exec(command, [],  {}); 
+        await exec.exec(command, [], {});
     }
-    catch(error) {
+    catch (error) {
         throw new Error(error);
     }
 }

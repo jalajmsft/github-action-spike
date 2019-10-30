@@ -21,57 +21,59 @@ const io = __importStar(require("@actions/io"));
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 const os = __importStar(require("os"));
-const utils_1 = require("./utils");
-var dockerPath;
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            let inlineScript = core.getInput('inlineScript');
-            let scriptPath = core.getInput('scriptPath');
-            let azcliversion = core.getInput('azcliversion');
-            if (process.env.RUNNER_OS != 'Linux') {
-                core.warning('Please use Linux as a runner.');
-                return;
-            }
-            dockerPath = yield io.which("docker", true);
-            let dockerCommand = `run -i --workdir /github/workspace -v ${process.env.RUNNER_TEMP || os.tmpdir()}:/github/_temp -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli:${azcliversion}`;
-            if (scriptPath) {
-                yield executeCommand(`chmod +x ${scriptPath}`);
-                dockerCommand += ` bash /github/workspace/${scriptPath}`;
-            }
-            else if (inlineScript) {
-                const { fileName, fullPath } = getScriptFileName();
-                fs.writeFileSync(path.join(fullPath), `#!/bin/bash \n\n set -eo \n ${inlineScript}`);
-                yield executeCommand(`chmod +x ${fullPath}`);
-                dockerCommand += ` bash /github/_temp/${fileName}`;
-                // dockerCommand += ` bash -c \"${inlineScript.replace(/"/g, '\\\"')}\"`;
-            }
-            yield executeCommand(dockerCommand, dockerPath);
-            console.log("az script ran successfully.");
+const bashArg = 'bash --noprofile --norc -eo pipefail';
+const pathToTempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
+const run = () => __awaiter(this, void 0, void 0, function* () {
+    try {
+        if (process.env.RUNNER_OS != 'Linux') {
+            core.warning('Please use Linux OS as a runner.');
+            return;
         }
-        catch (error) {
-            console.log("az script failed, Please check the script.", error);
-            core.setFailed(error.stderr);
+        const dockerPath = yield io.which("docker", true);
+        let inlineScript = core.getInput('inlineScript');
+        let scriptPath = core.getInput('scriptPath');
+        let azcliversion = core.getInput('azcliversion');
+        let bashCommand = '';
+        let dockerCommand = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure `;
+        if (scriptPath) {
+            yield giveExecutablePermissionsToFile(scriptPath);
+            bashCommand = ` ${bashArg} /github/workspace/${scriptPath} `;
         }
-    });
-}
-function getScriptFileName() {
-    const fileName = 'AZ_CLI_GITHUB_ACTION_' + utils_1.getCurrentTime().toString();
-    const tempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
+        else if (inlineScript) {
+            const { fileName, fullPath } = getScriptFileName();
+            fs.writeFileSync(path.join(fullPath), `${inlineScript}`);
+            yield giveExecutablePermissionsToFile(fullPath);
+            dockerCommand += ` -v ${pathToTempDirectory}:/_temp `;
+            bashCommand = ` ${bashArg} /_temp/${fileName} `;
+        }
+        dockerCommand += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
+        yield executeCommand(dockerCommand, dockerPath);
+        console.log("az script ran successfully.");
+    }
+    catch (error) {
+        console.log("az script failed, Please check the script.", error);
+        core.setFailed(error.stderr);
+    }
+});
+const giveExecutablePermissionsToFile = (filePath) => __awaiter(this, void 0, void 0, function* () { return yield executeCommand(`chmod +x ${filePath}`); });
+const getScriptFileName = () => {
+    const fileName = `AZ_CLI_GITHUB_ACTION_${getCurrentTime().toString()}.sh`;
+    const tempDirectory = pathToTempDirectory;
     const fullPath = path.join(tempDirectory, path.basename(fileName));
     return { fileName, fullPath };
-}
-function executeCommand(command, toolPath) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            if (toolPath) {
-                command = `"${toolPath}" ${command}`;
-            }
-            yield exec.exec(command, [], {});
+};
+const getCurrentTime = () => {
+    return new Date().getTime();
+};
+const executeCommand = (command, toolPath) => __awaiter(this, void 0, void 0, function* () {
+    try {
+        if (toolPath) {
+            command = `"${toolPath}" ${command}`;
         }
-        catch (error) {
-            throw new Error(error);
-        }
-    });
-}
+        yield exec.exec(command, [], {});
+    }
+    catch (error) {
+        throw new Error(error);
+    }
+});
 run();
