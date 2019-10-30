@@ -111,7 +111,7 @@ const getAllAzCliVersions = async () => {
             console.log("found");
         }
     });
-    return JSON.parse(outStream);
+    return JSON.parse(outStream).tags;
 }
 
 const checkIfFileExists = (filePath: string, fileExtension: string): boolean => {

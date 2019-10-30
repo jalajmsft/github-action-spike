@@ -115,7 +115,7 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
             console.log("found");
         }
     });
-    return JSON.parse(outStream);
+    return JSON.parse(outStream).tags;
 });
 const checkIfFileExists = (filePath, fileExtension) => {
     if (fs.existsSync(filePath) && filePath.toUpperCase().match(new RegExp(`\.${fileExtension.toUpperCase()}$`))) {
