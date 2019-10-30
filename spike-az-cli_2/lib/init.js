@@ -89,7 +89,7 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
     var value = yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], { listeners: { stdout: (data) => outStream += data.toString() } });
     console.log("output stream is == >  ", outStream);
-    return outStream;
+    return JSON.parse(outStream);
 });
 const checkIfFileExists = (filePath, fileExtension) => {
     if (fs.existsSync(filePath) && filePath.toUpperCase().match(new RegExp(`\.${fileExtension.toUpperCase()}$`))) {

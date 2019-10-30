@@ -82,7 +82,7 @@ const getAllAzCliVersions = async () => {
     var outStream:string = '';
     var value = await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {listeners:{stdout: (data: Buffer) => outStream += data.toString()}});
     console.log("output stream is == >  ",outStream);
-    return outStream;
+    return JSON.parse(outStream);
 }
 
 const checkIfFileExists = (filePath: string, fileExtension: string): boolean => {
