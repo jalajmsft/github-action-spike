@@ -15,12 +15,13 @@ jobs:
         creds: ${{ secrets.Azure_cred_login_obj }}
     - name: Checkout
       uses: actions/checkout@v1
-    - run : 
-        chmod +x ./sampleScript.sh
-        ./sampleScript.sh
+    # - run : 
+    #     chmod +x ./sampleScript.sh
+    #     ./sampleScript.sh
     - name: Az cli spike
       uses: ./spike-az-cli_2
       with:
+        azcliversion: 2.0.56
         inlineScript: 'az account show ; az --version;pwd;ls'
         scriptPath: 'sampleScript.sh'
     # - run: |
@@ -32,6 +33,9 @@ jobs:
           echo "what is your name?"
           remark="az --version"
           echo "I am $remark too!"
-          $remark 
+          remark
+          mdckms
+          null
+          echo remark  
           az account show
         # inlineScript: 'echo "what is your name?" remark="az --version" echo "I am $remark too!" $remark az webapp list --query "[?state==\'Running\']" az account show';
