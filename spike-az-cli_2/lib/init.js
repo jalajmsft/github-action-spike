@@ -21,6 +21,7 @@ const io = __importStar(require("@actions/io"));
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 const os = __importStar(require("os"));
+const stream = require("stream");
 const bashArg = 'bash --noprofile --norc -eo pipefail';
 const pathToTempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
 const run = () => __awaiter(this, void 0, void 0, function* () {
@@ -39,7 +40,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         console.log("type of g it is...", typeof (allVersions.tags));
         console.log("type of g1it is...", typeof (allVersions.tags[0]));
         console.log("azcliversion .................", azcliversion, typeof (azcliversion));
-        if (!(azcliversion in allVersions.tags)) {
+        if (!(`'${azcliversion}'` in allVersions.tags)) {
             core.setFailed('Please enter a valid azure cli version.');
             return;
         }
@@ -90,7 +91,14 @@ const executeCommand = (command, toolPath) => __awaiter(this, void 0, void 0, fu
 });
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
-    yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], { listeners: { stdout: (data) => outStream += data.toString() } });
+    yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list -s`, [], {
+        outStream: new StringWritable({ decodeStrings: false }),
+        listeners: {
+            stdout: (data) => outStream += data.toString()
+        }
+    });
+    // await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {listeners:{stdout: (data: Buffer) => outStream += data.toString()}});
+    console.log("out --->", outStream);
     return JSON.parse(outStream);
 });
 const checkIfFileExists = (filePath, fileExtension) => {
@@ -98,5 +106,38 @@ const checkIfFileExists = (filePath, fileExtension) => {
         return true;
     }
     return false;
+};
+class StringWritable extends stream.Writable {
+    constructor(options) {
+        super(options);
+        this.value = '';
+    }
+    _write(data, encoding, callback) {
+        this.value += data;
+        if (callback) {
+            callback();
+        }
+    }
+    toString() {
+        return this.value;
+    }
+}
+;
+// function handleExecResult(execResult: tr.IExecResult, file: string): void {
+//     if (execResult.code != tl.TaskResult.Succeeded) {
+//         tl.debug('execResult: ' + JSON.stringify(execResult));
+//         const message: string = 'Extraction failed for file: ' + file +
+//             '\ncode: ' + execResult.code +
+//             '\nstdout: ' + execResult.stdout +
+//             '\nstderr: ' + execResult.stderr +
+//             '\nerror: ' + execResult.error;
+//         throw new UnzipError(message);
+//     }
+// }
+const getOptions = () => {
+    const execOptions = {
+        outStream: new StringWritable({ decodeStrings: false })
+    };
+    return execOptions;
 };
 run();
