@@ -73,7 +73,7 @@ const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, fu
     }
     return false;
 });
-const giveExecutablePermissionsToFile = (filePath) => __awaiter(this, void 0, void 0, function* () { return yield executeCommand(`chmod +x ${filePath}`); });
+const giveExecutablePermissionsToFile = (filePath) => __awaiter(this, void 0, void 0, function* () { return yield executeCommand(`chmod +x ${filePath}`, { silent: true }); });
 const getScriptFileName = () => {
     const fileName = `AZ_CLI_GITHUB_ACTION_${getCurrentTime().toString()}.sh`;
     const tempDirectory = pathToTempDirectory;
@@ -96,7 +96,7 @@ const executeCommand = (command, execOptions = {}, toolPath) => __awaiter(this, 
 });
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
-    yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list -s`, [], {
+    yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/li -s`, [], {
         outStream: new StringWritable({ decodeStrings: false }),
         listeners: {
             stdout: (data) => outStream += data.toString()

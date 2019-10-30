@@ -63,7 +63,7 @@ const checkIfValidVersion = async (azcliversion:string): Promise<boolean> => {
     return false;
 }
 
-const giveExecutablePermissionsToFile = async (filePath: string) => await executeCommand(`chmod +x ${filePath}`)
+const giveExecutablePermissionsToFile = async (filePath: string) => await executeCommand(`chmod +x ${filePath}`, {silent:true})
 
 const getScriptFileName = () => {
     const fileName: string = `AZ_CLI_GITHUB_ACTION_${getCurrentTime().toString()}.sh`;
@@ -90,7 +90,7 @@ const executeCommand = async (command: string, execOptions = {}, toolPath?: stri
 
 const getAllAzCliVersions = async (): Promise<Array<string>> => {
     var outStream:string = '';
-    await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list -s`, [], {
+    await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/li -s`, [], {
                     outStream: new StringWritable({ decodeStrings: false }), 
                     listeners:{
                         stdout: (data: Buffer) => outStream += data.toString()
