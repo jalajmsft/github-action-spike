@@ -59,7 +59,7 @@ const checkIfValidVersion = async (azcliversion:string): Promise<boolean> => {
         console.log("type of g1it is...",allVersions.tags[0], typeof(allVersions.tags[0]));
         console.log("azcliversion .................", azcliversion, typeof(azcliversion));
 
-    allVersions.tags.reverse.forEach((eachVersion:string) => {
+    allVersions.tags.reverse().forEach((eachVersion:string) => {
         if(eachVersion == azcliversion){
             return true;
         }
