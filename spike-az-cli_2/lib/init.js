@@ -38,8 +38,10 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             core.setFailed('Please enter a valid azure cli version.');
             return;
         }
-        var check = checkIfFileExists(scriptPath, 'sh');
-        console.log("does file exist.................", check);
+        if (!checkIfFileExists(scriptPath, 'sh')) {
+            core.setFailed('Please enter a valid script file path.');
+            return;
+        }
         let bashCommand = '';
         let dockerCommand = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure `;
         if (scriptPath) {
@@ -54,7 +56,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             bashCommand = ` ${bashArg} /_temp/${fileName} `;
         }
         dockerCommand += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
-        yield executeCommand(dockerCommand, dockerPath);
+        yield executeCommand(dockerCommand, { silent: true }, dockerPath);
         console.log("az script ran successfully.");
     }
     catch (error) {
@@ -64,14 +66,11 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
 });
 const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
     const allVersions = yield getAllAzCliVersions();
-    console.log(allVersions);
     for (let i = allVersions.length - 1; i >= 0; i--) {
         if (allVersions[i].trim() === azcliversion) {
-            console.log("found..");
             return true;
         }
     }
-    console.log("not found");
     return false;
 });
 const giveExecutablePermissionsToFile = (filePath) => __awaiter(this, void 0, void 0, function* () { return yield executeCommand(`chmod +x ${filePath}`); });
@@ -84,12 +83,12 @@ const getScriptFileName = () => {
 const getCurrentTime = () => {
     return new Date().getTime();
 };
-const executeCommand = (command, toolPath) => __awaiter(this, void 0, void 0, function* () {
+const executeCommand = (command, execOptions = {}, toolPath) => __awaiter(this, void 0, void 0, function* () {
     try {
         if (toolPath) {
             command = `"${toolPath}" ${command}`;
         }
-        yield exec.exec(command, [], {});
+        yield exec.exec(command, [], execOptions);
     }
     catch (error) {
         throw new Error(error);
@@ -101,14 +100,6 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
         outStream: new StringWritable({ decodeStrings: false }),
         listeners: {
             stdout: (data) => outStream += data.toString()
-        }
-    });
-    // await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {listeners:{stdout: (data: Buffer) => outStream += data.toString()}});
-    console.log("out --->", outStream);
-    JSON.parse(outStream).tags.forEach((element) => {
-        console.log("ele", element);
-        if (element == '2.0.56') {
-            console.log("found");
         }
     });
     return JSON.parse(outStream).tags;

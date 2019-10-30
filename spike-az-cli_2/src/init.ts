@@ -26,9 +26,11 @@ const run = async () => {
             core.setFailed('Please enter a valid azure cli version.');
             return;
         }
-        
-        var check = checkIfFileExists(scriptPath, 'sh');
-        console.log("does file exist.................", check);
+
+        if(!checkIfFileExists(scriptPath, 'sh')){
+            core.setFailed('Please enter a valid script file path.');
+            return;
+        }
 
         let bashCommand: string = '';
         let dockerCommand: string = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure `;
@@ -43,7 +45,7 @@ const run = async () => {
             bashCommand = ` ${bashArg} /_temp/${fileName} `;
         }
         dockerCommand += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
-        await executeCommand(dockerCommand, dockerPath);
+        await executeCommand(dockerCommand,{silent:true}, dockerPath);
         console.log("az script ran successfully.");
     } catch (error) {
         console.log("az script failed, Please check the script.", error);
@@ -53,15 +55,11 @@ const run = async () => {
 
 const checkIfValidVersion = async (azcliversion:string): Promise<boolean> => {
     const allVersions: Array<string> = await getAllAzCliVersions();
-        console.log(allVersions);
-
     for (let i = allVersions.length-1; i>=0; i--){
         if (allVersions[i].trim() === azcliversion){
-            console.log("found..");
             return true;
         }
     }
-    console.log("not found");
     return false;
 }
 
@@ -78,12 +76,12 @@ const getCurrentTime = (): number => {
     return new Date().getTime();
 }
 
-const executeCommand = async (command: string, toolPath?: string) => {
+const executeCommand = async (command: string, execOptions = {}, toolPath?: string) => {
     try {
         if (toolPath) {
             command = `"${toolPath}" ${command}`;
         }
-        await exec.exec(command, [], {});
+        await exec.exec(command, [], execOptions);
     }
     catch (error) {
         throw new Error(error);
@@ -92,21 +90,12 @@ const executeCommand = async (command: string, toolPath?: string) => {
 
 const getAllAzCliVersions = async (): Promise<Array<string>> => {
     var outStream:string = '';
-    await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list -s`, [], 
-                {
+    await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list -s`, [], {
                     outStream: new StringWritable({ decodeStrings: false }), 
                     listeners:{
                         stdout: (data: Buffer) => outStream += data.toString()
                     }
                 });
-    // await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {listeners:{stdout: (data: Buffer) => outStream += data.toString()}});
-    console.log("out --->", outStream);
-    JSON.parse(outStream).tags.forEach((element:any) => {
-        console.log("ele",element);
-        if(element == '2.0.56'){
-            console.log("found");
-        }
-    });
     return JSON.parse(outStream).tags;
 }
 
