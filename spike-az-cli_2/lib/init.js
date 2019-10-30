@@ -33,7 +33,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         const dockerPath = yield io.which("docker", true);
         let inlineScript = core.getInput('inlineScript');
         let scriptPath = core.getInput('scriptPath');
-        let azcliversion = core.getInput('azcliversion');
+        let azcliversion = core.getInput('azcliversion').trim();
         if (!(yield checkIfValidVersion(azcliversion))) {
             core.setFailed('Please enter a valid azure cli version.');
             return;
@@ -70,10 +70,12 @@ const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, fu
     console.log("type of g1it is...", allVersions.tags[0], typeof (allVersions.tags[0]));
     console.log("azcliversion .................", azcliversion, typeof (azcliversion));
     allVersions.tags.reverse().forEach((eachVersion) => {
-        if (eachVersion == azcliversion) {
+        if (eachVersion.trim() == azcliversion) {
+            console.log("found...");
             return true;
         }
     });
+    console.log("not found");
     return false;
 });
 const giveExecutablePermissionsToFile = (filePath) => __awaiter(this, void 0, void 0, function* () { return yield executeCommand(`chmod +x ${filePath}`); });
@@ -109,7 +111,7 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     console.log("out --->", outStream);
     JSON.parse(outStream).tags.forEach((element) => {
         console.log("ele", element);
-        if (element == '2.0.65') {
+        if (element == '2.0.56') {
             console.log("found");
         }
     });

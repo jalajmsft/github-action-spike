@@ -20,7 +20,7 @@ const run = async () => {
 
         let inlineScript: string = core.getInput('inlineScript');
         let scriptPath: string = core.getInput('scriptPath');
-        let azcliversion: string = core.getInput('azcliversion');
+        let azcliversion: string = core.getInput('azcliversion').trim();
 
         if(! (await checkIfValidVersion(azcliversion))){
             core.setFailed('Please enter a valid azure cli version.');
@@ -60,10 +60,12 @@ const checkIfValidVersion = async (azcliversion:string): Promise<boolean> => {
         console.log("azcliversion .................", azcliversion, typeof(azcliversion));
 
     allVersions.tags.reverse().forEach((eachVersion:string) => {
-        if(eachVersion == azcliversion){
+        if(eachVersion.trim() == azcliversion){
+            console.log("found...");
             return true;
         }
     });
+    console.log("not found");
     return false;
 }
 
@@ -105,7 +107,7 @@ const getAllAzCliVersions = async () => {
     console.log("out --->", outStream);
     JSON.parse(outStream).tags.forEach((element:any) => {
         console.log("ele",element);
-        if(element == '2.0.65'){
+        if(element == '2.0.56'){
             console.log("found");
         }
     });
