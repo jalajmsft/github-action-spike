@@ -12,7 +12,7 @@ const run = async () => {
 
     try {
         if (process.env.RUNNER_OS != 'Linux') {
-            core.warning('Please use Linux OS as a runner.');
+            core.setFailed('Please use Linux OS as a runner.');
             return;
         }
         const dockerPath: string = await io.which("docker", true);
@@ -24,8 +24,12 @@ const run = async () => {
         const allVersions:any = await getAllAzCliVersions();
         console.log(allVersions);
         console.log("type of it is...", typeof(allVersions));
+        console.log("type of g it is...", typeof(allVersions.tags));
+        console.log("type of g1it is...", typeof(allVersions.tags[0]));
+        console.log("azcliversion .................", azcliversion, typeof(azcliversion));
+
         if (!(azcliversion in allVersions.tags)){
-            core.warning('Please enter a valid azure cli version.');
+            core.setFailed('Please enter a valid azure cli version.');
             return;
         }
         var check = checkIfFileExists(scriptPath, 'sh');
@@ -34,7 +38,6 @@ const run = async () => {
         let bashCommand: string = '';
         let dockerCommand: string = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure `;
         if (scriptPath) {
-
             await giveExecutablePermissionsToFile(scriptPath);
             bashCommand = ` ${bashArg} /github/workspace/${scriptPath} `;
         } else if (inlineScript) {
@@ -80,8 +83,7 @@ const executeCommand = async (command: string, toolPath?: string) => {
 
 const getAllAzCliVersions = async () => {
     var outStream:string = '';
-    var value = await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {listeners:{stdout: (data: Buffer) => outStream += data.toString()}});
-    console.log("output stream is == >  ",outStream);
+    await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {listeners:{stdout: (data: Buffer) => outStream += data.toString()}});
     return JSON.parse(outStream);
 }
 
