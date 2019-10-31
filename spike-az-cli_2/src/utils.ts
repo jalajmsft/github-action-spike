@@ -42,25 +42,23 @@ export const executeScript = async (command: string, toolPath: string = ''): Pro
     var outStream: string = '';
     var errorStream: string = '';
     var errorCaught: string = '';
+    var options: any = {
+        outStream: new OutstreamStringWritable({ decodeStrings: false }),
+        errStream: new ErrorstreamStringWritable({ decodeStrings: false })
+    };
+
     try {
-        await executeCommand(command, {
-            outStream: new StringWritable({ decodeStrings: false }),
-            errStream: new StringWritable({ decodeStrings: false }),
-            listeners: {
-                stdout: (data: Buffer) => outStream += data.toString(),
-                stderr: (data: Buffer) => errorStream += data.toString()
-            }
-        }, toolPath);
+        await executeCommand(command, options, toolPath);
     }
     catch (error) {
         errorCaught = error;
     }
     finally {
-        return { outStream, errorStream, errorCaught };
+        return { outStream: options.outStream.toString(), errorStream: options.errStream.toString(), errorCaught };
     }
 }
 
-class StringWritable extends stream.Writable {
+class OutstreamStringWritable extends stream.Writable {
     private value: string = '';
 
     constructor(options: any) {
@@ -69,7 +67,36 @@ class StringWritable extends stream.Writable {
 
     _write(data: any, encoding: string, callback: Function): void {
 
+        console.log(data.toString());
         this.value += data.toString();
+        if (callback) {
+            callback();
+        }
+    }
+
+    toString(): string {
+        return this.value;
+    }
+};
+
+class ErrorstreamStringWritable extends stream.Writable {
+    private value: string = '';
+
+
+    constructor(options: any) {
+        super(options);
+    }
+
+    _write(data: any, encoding: string, callback: Function): void {
+
+        console.log(data.toString());
+        if(data.toString().trim() === 'Starting script execution') {
+            this.value = '';
+        } 
+        else {
+            this.value += data.toString();
+        }
+        
         if (callback) {
             callback();
         }
