@@ -32,15 +32,21 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             core.setFailed('Please enter a valid azure cli version. \nRead more about Azure CLI versions: https://github.com/Azure/azure-cli/releases.');
             return;
         }
-        console.log("inline...sc", inlineScript);
         if (!inlineScript.trim()) {
-            core.setFailed('Please enter ja a valid script.');
+            core.setFailed('Please enter a valid script.');
             return;
         }
         const { fileName, fullPath } = utils_1.getScriptFileName();
         fs.writeFileSync(fullPath, `${inlineScript}`);
         yield utils_1.giveExecutablePermissionsToFile(fullPath);
         let bashCommand = ` ${bashArg} /_temp/${fileName} `;
+        /*
+        For the docker run command, we are doing the following
+        - Set the working directory for docker continer
+        - volume mount the GITHUB_WORKSPACE env variable (path where users checkout code is present) to work directory of container
+        - voulme mount .azure session token file between host and container,
+        - volume mount temp directory between host and container, inline script file is created in temp directory
+        */
         let command = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace `;
         command += ` -v /home/runner/.azure:/root/.azure -v ${utils_1.tempDirectory}:/_temp `;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
@@ -48,7 +54,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         console.log("az script ran successfully.");
     }
     catch (error) {
-        console.log("az CLI GitHub action failed.\n\n", error);
+        console.log("az CLI action failed.\n\n", error);
         core.setFailed(error.stderr);
     }
 });
