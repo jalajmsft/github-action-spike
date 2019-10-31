@@ -2,6 +2,7 @@ import stream = require('stream');
 import * as exec from '@actions/exec';
 import * as path from 'path';
 import * as os from 'os';
+import * as fs from 'fs';
 
 export const tempDirectory: string = process.env.RUNNER_TEMP || os.tmpdir();
 
@@ -13,10 +14,12 @@ export interface ExecuteScriptModel {
 
 export const giveExecutablePermissionsToFile = async (filePath: string): Promise<void> => await executeCommand(`chmod +x ${filePath}`, { silent: true })
 
-export const getScriptFileName = (): string => {
+export const createScriptFile = async (inlineScript: string): Promise<string> => {
     const fileName: string = `AZ_CLI_GITHUB_ACTION_${getCurrentTime().toString()}.sh`;
-    const fullPath: string = path.join(tempDirectory, fileName);
-    return fullPath;
+    const filePath: string = path.join(tempDirectory, fileName);
+    fs.writeFileSync(filePath, `${inlineScript}`);
+    await giveExecutablePermissionsToFile(filePath);
+    return fileName;
 }
 
 export const getCurrentTime = (): number => {
@@ -24,15 +27,15 @@ export const getCurrentTime = (): number => {
 }
 
 export const executeCommand = async (command: string, execOptions = {}, toolPath?: string): Promise<void> => {
-    try {
+    // try {
         if (toolPath) {
             command = `"${toolPath}" ${command}`;
         }
         await exec.exec(command, [], execOptions);
-    }
-    catch (error) {
-        throw new Error(error);
-    }
+    // }
+    // catch (error) {
+    //     throw new Error(error);
+    // }
 }
 
 export const executeScript = async (command: string, toolPath: string = ''): Promise<ExecuteScriptModel> => {

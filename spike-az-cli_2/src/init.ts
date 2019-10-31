@@ -2,11 +2,11 @@ import * as core from '@actions/core';
 import * as fs from 'fs';
 import * as io from '@actions/io';
 import * as path from 'path';
-import { getScriptFileName, giveExecutablePermissionsToFile, executeScript, tempDirectory, ExecuteScriptModel } from './utils';
+import { createScriptFile, giveExecutablePermissionsToFile, executeScript, tempDirectory, ExecuteScriptModel } from './utils';
 
-const bashArg: string = 'bash --noprofile --norc -eo pipefail';
-const containerWorkspace: string = '/github/workspace';
-const containerTempDirectory: string = '/_temp';
+const BASH_ARG: string = `bash --noprofile --norc -eo pipefail -c "echo 'Starting script execution';`;
+const CONTAINER_WORKSPACE: string = '/github/workspace';
+const CONTAINER_TEMP_DIRECTORY: string = '/_temp';
 const run = async () => {
 
     try {
@@ -14,21 +14,22 @@ const run = async () => {
             core.setFailed('Please use Linux based OS as a runner.');
             return;
         }
+        
         let inlineScript: string = core.getInput('inlineScript', {required:true});
         let azcliversion: string = core.getInput('azcliversion', {required:true}).trim();
 
-        if (!(await checkIfValidVersion(azcliversion))) {
-            core.setFailed('Please enter a valid azure cli version. \nRead more about Azure CLI versions: https://github.com/Azure/azure-cli/releases.');
+        if (!(await checkIfValidCLIVersion(azcliversion))) {
+            core.setFailed('Please enter a valid azure cli version. \nSee available versions: https://github.com/Azure/azure-cli/releases.');
             return;
         }
+
         if (!inlineScript.trim()) {
             core.setFailed('Please enter a valid script.');
             return;
         }
-        const fullPath:string = getScriptFileName();
-        fs.writeFileSync(fullPath, `${inlineScript}`);
-        await giveExecutablePermissionsToFile(fullPath);
-        let bashCommand: string = ` ${bashArg} ${containerTempDirectory}/${path.basename(fullPath)} `;
+        const scriptFile:string = await createScriptFile(inlineScript);
+        let bashCommand: string = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFile} `;
+
         /*
         For the docker run command, we are doing the following
         - Set the working directory for docker continer
@@ -36,9 +37,11 @@ const run = async () => {
         - voulme mount .azure session token file between host and container,
         - volume mount temp directory between host and container, inline script file is created in temp directory
         */
-        let command: string = `run --workdir ${containerWorkspace} -v ${process.env.GITHUB_WORKSPACE}:${containerWorkspace} `;
-        command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${tempDirectory}:${containerTempDirectory} `;
+        let command: string = `run --workdir ${CONTAINER_WORKSPACE} -v ${process.env.GITHUB_WORKSPACE}:${CONTAINER_WORKSPACE} `;
+        command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${tempDirectory}:${CONTAINER_TEMP_DIRECTORY} `;
+        command += `-e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE}`;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
+
         await executeDockerScript(command);
         console.log("az script ran successfully.");
     } catch (error) {
@@ -47,7 +50,7 @@ const run = async () => {
     }
 };
 
-const checkIfValidVersion = async (azcliversion: string): Promise<boolean> => {
+const checkIfValidCLIVersion = async (azcliversion: string): Promise<boolean> => {
     const allVersions: Array<string> = await getAllAzCliVersions();
     for (let i: number = allVersions.length - 1; i >= 0; i--) {
         if (allVersions[i].trim() === azcliversion) {
@@ -71,8 +74,8 @@ const getAllAzCliVersions = async (): Promise<Array<string>> => {
 }
 
 const executeDockerScript = async (dockerCommand: string): Promise<void> => {
-    const dockerPath: string = await io.which("docker", true);
-    const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(dockerCommand, dockerPath);
+    const dockerTool: string = await io.which("docker", true);
+    const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(dockerCommand, dockerTool);
     console.log(outStream);
     if (errorCaught) {
         throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\nDocker logs...\n${errorStream}.`);

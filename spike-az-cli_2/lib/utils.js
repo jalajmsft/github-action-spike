@@ -19,27 +19,30 @@ const stream = require("stream");
 const exec = __importStar(require("@actions/exec"));
 const path = __importStar(require("path"));
 const os = __importStar(require("os"));
+const fs = __importStar(require("fs"));
 exports.tempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
 ;
 exports.giveExecutablePermissionsToFile = (filePath) => __awaiter(this, void 0, void 0, function* () { return yield exports.executeCommand(`chmod +x ${filePath}`, { silent: true }); });
-exports.getScriptFileName = () => {
+exports.createScriptFile = (inlineScript) => __awaiter(this, void 0, void 0, function* () {
     const fileName = `AZ_CLI_GITHUB_ACTION_${exports.getCurrentTime().toString()}.sh`;
-    const fullPath = path.join(exports.tempDirectory, fileName);
-    return fullPath;
-};
+    const filePath = path.join(exports.tempDirectory, fileName);
+    fs.writeFileSync(filePath, `${inlineScript}`);
+    yield exports.giveExecutablePermissionsToFile(filePath);
+    return fileName;
+});
 exports.getCurrentTime = () => {
     return new Date().getTime();
 };
 exports.executeCommand = (command, execOptions = {}, toolPath) => __awaiter(this, void 0, void 0, function* () {
-    try {
-        if (toolPath) {
-            command = `"${toolPath}" ${command}`;
-        }
-        yield exec.exec(command, [], execOptions);
+    // try {
+    if (toolPath) {
+        command = `"${toolPath}" ${command}`;
     }
-    catch (error) {
-        throw new Error(error);
-    }
+    yield exec.exec(command, [], execOptions);
+    // }
+    // catch (error) {
+    //     throw new Error(error);
+    // }
 });
 exports.executeScript = (command, toolPath = '') => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
