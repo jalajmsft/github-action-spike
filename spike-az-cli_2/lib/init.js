@@ -96,16 +96,21 @@ const executeCommand = (command, execOptions = {}, toolPath) => __awaiter(this, 
 });
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
-    yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/li -s`, [], {
-        outStream: new StringWritable({ decodeStrings: false }),
-        listeners: {
-            stdout: (data) => outStream += data.toString()
+    try {
+        yield exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/li -s`, [], {
+            outStream: new StringWritable({ decodeStrings: false }),
+            listeners: {
+                stdout: (data) => outStream += data.toString()
+            }
+        });
+        if (outStream && JSON.parse(outStream).tags) {
+            return JSON.parse(outStream).tags;
         }
-    });
-    if (outStream && JSON.parse(outStream).tags) {
-        return JSON.parse(outStream).tags;
     }
-    throw new Error(`Unable to fetch all az cli versions, please report it as a issue. ${outStream}`);
+    catch (error) {
+        throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream = ${outStream}, error = ${error}`);
+    }
+    return [];
 });
 const checkIfFileExists = (filePath, fileExtension) => {
     if (fs.existsSync(filePath) && filePath.toUpperCase().match(new RegExp(`\.${fileExtension.toUpperCase()}$`))) {

@@ -90,16 +90,21 @@ const executeCommand = async (command: string, execOptions = {}, toolPath?: stri
 
 const getAllAzCliVersions = async (): Promise<Array<string>> => {
     var outStream:string = '';
-    await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/li -s`, [], {
-                    outStream: new StringWritable({ decodeStrings: false }), 
-                    listeners:{
-                        stdout: (data: Buffer) => outStream += data.toString()
-                    }
-                });
-    if (outStream && JSON.parse(outStream).tags){
-        return JSON.parse(outStream).tags;
+    try {
+        await exec.exec(`curl --location https://mcr.microsoft.com/v2/azure-cli/tags/li -s`, [], {
+                        outStream: new StringWritable({ decodeStrings: false }), 
+                        listeners:{
+                            stdout: (data: Buffer) => outStream += data.toString()
+                        }
+                    });
+        if (outStream && JSON.parse(outStream).tags){
+            return JSON.parse(outStream).tags;
+        }
     }
-    throw new Error(`Unable to fetch all az cli versions, please report it as a issue. ${outStream}`);
+    catch (error){
+        throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream = ${outStream}, error = ${error}`);
+    }
+    return [];
 }
 
 const checkIfFileExists = (filePath: string, fileExtension: string): boolean => {
