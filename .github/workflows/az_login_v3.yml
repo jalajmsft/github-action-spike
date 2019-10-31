@@ -26,18 +26,18 @@ jobs:
         # scriptPath: 'sampleScript.sh'
     # - run: |
     #     docker run -i --workdir /github/workspace -v /home/runner/work/github-action-spike/github-action-spike/:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli bash /home/runner/work/github-action-spike/github-action-spike/sampleScript.sh
-    - name: Az cli spike
-      uses: ./spike-az-cli_2
-      with:
-        inlineScript: |
-          echo "what is your name?"
-          remark="az --version"
-          echo "I am $remark too!"
-          remark
-          mdckms
-          null
-          echo remark  
-          az account show
+    # - name: Az cli spike
+    #   uses: ./spike-az-cli_2
+    #   with:
+    #     inlineScript: |
+    #       echo "what is your name?"
+    #       remark="az --version"
+    #       echo "I am $remark too!"
+    #       remark
+    #       mdckms
+    #       null
+    #       echo remark  
+    #       az account show
         # inlineScript: 'echo "what is your name?" remark="az --version" echo "I am $remark too!" $remark az webapp list --query "[?state==\'Running\']" az account show';
     - name: Az cli spike
       uses: ./spike-az-cli_2

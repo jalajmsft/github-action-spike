@@ -68,7 +68,7 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
     const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(dockerCommand, dockerPath);
     console.log(outStream);
     if (errorCaught) {
-        throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\n\nDocker logs...\n${errorStream}.`);
+        throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\nDocker logs...\n${errorStream}.`);
     }
 }
 

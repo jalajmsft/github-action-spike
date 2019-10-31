@@ -78,7 +78,7 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
     const { outStream, errorStream, errorCaught } = yield utils_1.executeScript(dockerCommand, dockerPath);
     console.log(outStream);
     if (errorCaught) {
-        throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\n\nDocker logs...\n${errorStream}.`);
+        throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\nDocker logs...\n${errorStream}.`);
     }
 });
 run();
