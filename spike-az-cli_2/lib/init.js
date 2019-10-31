@@ -102,7 +102,10 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
             stdout: (data) => outStream += data.toString()
         }
     });
-    return JSON.parse(outStream).tags;
+    if (outStream && JSON.parse(outStream).tags) {
+        return JSON.parse(outStream).tags;
+    }
+    throw new Error(`Unable to fetch all az cli versions, please report it as a issue. ${outStream}`);
 });
 const checkIfFileExists = (filePath, fileExtension) => {
     if (fs.existsSync(filePath) && filePath.toUpperCase().match(new RegExp(`\.${fileExtension.toUpperCase()}$`))) {
