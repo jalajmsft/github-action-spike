@@ -97,7 +97,7 @@ const executeCommand = (command, execOptions = {}, toolPath) => __awaiter(this, 
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
     try {
-        yield exec.exec(`curl --locion https://mcr.microsoft.com/v2/azure-cli/tags/li -s`, [], {
+        yield exec.exec(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {
             outStream: new StringWritable({ decodeStrings: false }),
             listeners: {
                 stdout: (data) => outStream += data.toString()

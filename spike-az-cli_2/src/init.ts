@@ -91,7 +91,7 @@ const executeCommand = async (command: string, execOptions = {}, toolPath?: stri
 const getAllAzCliVersions = async (): Promise<Array<string>> => {
     var outStream:string = '';
     try {
-        await exec.exec(`curl --locion https://mcr.microsoft.com/v2/azure-cli/tags/li -s`, [], {
+        await exec.exec(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {
                         outStream: new StringWritable({ decodeStrings: false }), 
                         listeners:{
                             stdout: (data: Buffer) => outStream += data.toString()
