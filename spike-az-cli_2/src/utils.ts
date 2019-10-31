@@ -11,17 +11,12 @@ export interface ExecuteScriptModel {
     errorCaught: any;
 };
 
-export interface FileNameModel {
-    fileName: string;
-    fullPath: string;
-};
-
 export const giveExecutablePermissionsToFile = async (filePath: string): Promise<void> => await executeCommand(`chmod +x ${filePath}`, { silent: true })
 
-export const getScriptFileName = (): FileNameModel => {
+export const getScriptFileName = (): string => {
     const fileName: string = `AZ_CLI_GITHUB_ACTION_${getCurrentTime().toString()}.sh`;
     const fullPath: string = path.join(tempDirectory, fileName);
-    return { fileName, fullPath };
+    return fullPath;
 }
 
 export const getCurrentTime = (): number => {

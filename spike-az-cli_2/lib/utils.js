@@ -21,12 +21,11 @@ const path = __importStar(require("path"));
 const os = __importStar(require("os"));
 exports.tempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
 ;
-;
 exports.giveExecutablePermissionsToFile = (filePath) => __awaiter(this, void 0, void 0, function* () { return yield exports.executeCommand(`chmod +x ${filePath}`, { silent: true }); });
 exports.getScriptFileName = () => {
     const fileName = `AZ_CLI_GITHUB_ACTION_${exports.getCurrentTime().toString()}.sh`;
     const fullPath = path.join(exports.tempDirectory, fileName);
-    return { fileName, fullPath };
+    return fullPath;
 };
 exports.getCurrentTime = () => {
     return new Date().getTime();

@@ -18,16 +18,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const fs = __importStar(require("fs"));
 const io = __importStar(require("@actions/io"));
+const path = __importStar(require("path"));
 const utils_1 = require("./utils");
 const bashArg = 'bash --noprofile --norc -eo pipefail';
+const containerWorkspace = '/github/workspace';
+const containerTempDirectory = '/_temp';
 const run = () => __awaiter(this, void 0, void 0, function* () {
     try {
         if (process.env.RUNNER_OS != 'Linux') {
             core.setFailed('Please use Linux based OS as a runner.');
             return;
         }
-        let inlineScript = core.getInput('inlineScript');
-        let azcliversion = core.getInput('azcliversion').trim();
+        let inlineScript = core.getInput('inlineScript', { required: true });
+        let azcliversion = core.getInput('azcliversion', { required: true }).trim();
         if (!(yield checkIfValidVersion(azcliversion))) {
             core.setFailed('Please enter a valid azure cli version. \nRead more about Azure CLI versions: https://github.com/Azure/azure-cli/releases.');
             return;
@@ -36,10 +39,10 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             core.setFailed('Please enter a valid script.');
             return;
         }
-        const { fileName, fullPath } = utils_1.getScriptFileName();
+        const fullPath = utils_1.getScriptFileName();
         fs.writeFileSync(fullPath, `${inlineScript}`);
         yield utils_1.giveExecutablePermissionsToFile(fullPath);
-        let bashCommand = ` ${bashArg} /_temp/${fileName} `;
+        let bashCommand = ` ${bashArg} ${containerTempDirectory}/${path.basename(fullPath)} `;
         /*
         For the docker run command, we are doing the following
         - Set the working directory for docker continer
@@ -47,8 +50,8 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         - voulme mount .azure session token file between host and container,
         - volume mount temp directory between host and container, inline script file is created in temp directory
         */
-        let command = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace `;
-        command += ` -v /home/runner/.azure:/root/.azure -v ${utils_1.tempDirectory}:/_temp `;
+        let command = `run --workdir ${containerWorkspace} -v ${process.env.GITHUB_WORKSPACE}:${containerWorkspace} `;
+        command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${utils_1.tempDirectory}:${containerTempDirectory} `;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
         yield executeDockerScript(command);
         console.log("az script ran successfully.");
