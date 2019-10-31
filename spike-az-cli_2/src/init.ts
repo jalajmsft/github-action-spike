@@ -35,7 +35,7 @@ const run = async () => {
         await executeDockerScript(command);
         console.log("az script ran successfully.");
     } catch (error) {
-        console.log("az CLI GitHub action failed.\n\n", error);
+        console.log("az CLI GitHub action failed.\n\n",error);
         core.setFailed(error.stderr);
     }
 };
@@ -53,9 +53,6 @@ const checkIfValidVersion = async (azcliversion: string): Promise<boolean> => {
 const getAllAzCliVersions = async (): Promise<Array<string>> => {
 
     const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`);
-    console.log("ot = ", outStream);
-    console.log("errr = ", errorStream);
-    console.log("er = ", errorCaught);
     try{
         if (outStream && JSON.parse(outStream).tags) {
             return JSON.parse(outStream).tags;
@@ -70,9 +67,6 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
     const dockerPath: string = await io.which("docker", true);
     const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(dockerCommand, dockerPath);
     console.log(outStream);
-    console.log("ot = ",outStream );
-    console.log("errr = ",errorStream );
-    console.log("er = ",errorCaught );
     if (errorCaught) {
         throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\n\nDocker logs...\n${errorStream}.`);
     }
