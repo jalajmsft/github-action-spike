@@ -42,4 +42,4 @@ jobs:
     - name: Az cli spike
       uses: ./spike-az-cli_2
       with:
-        inlineScript:                            
+        inlineScript:   '                            '                         
