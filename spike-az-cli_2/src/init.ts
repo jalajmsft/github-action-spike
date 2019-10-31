@@ -9,19 +9,20 @@ const bashArg = 'bash --noprofile --norc -eo pipefail';
 const run = async () => {
 
     try {
-        // if (process.env.RUNNER_OS != 'Linux') {
-        //     core.setFailed('Please use Linux OS as a runner.');
-        //     return;
-        // }
+        if (process.env.RUNNER_OS != 'Linux') {
+            core.setFailed('Please use Linux OS as a runner.');
+            return;
+        }
         let inlineScript: string = core.getInput('inlineScript');
         let azcliversion: string = core.getInput('azcliversion').trim();
 
         if (!(await checkIfValidVersion(azcliversion))) {
-            core.setFailed('Please enter a valid azure cli version.');
+            core.setFailed('Please enter a valid azure cli version. \nRead more about Azure CLI versions: https://github.com/Azure/azure-cli/releases.');
             return;
         }
+        console.log("inline...sc",inlineScript);
         if (!inlineScript.trim()) {
-            core.setFailed('Please enter a valid script.');
+            core.setFailed('Please enter ja a valid script.');
             return;
         }
         const { fileName, fullPath } = <FileNameModel>getScriptFileName();
