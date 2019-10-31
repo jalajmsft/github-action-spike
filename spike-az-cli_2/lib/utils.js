@@ -49,7 +49,7 @@ exports.getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* ()
     try {
         yield exports.executeCommand(`curl --lation -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, {
             outStream: new StringWritable({ decodeStrings: false }),
-            errorStream: new StringWritable({ decodeStrings: false }),
+            errStream: new StringWritable({ decodeStrings: false }),
             listeners: {
                 stdout: (data) => outStream += data.toString(),
                 stderrt: (data) => errorStream += data.toString()
