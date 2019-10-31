@@ -67,16 +67,6 @@ exports.executeScript = (command, toolPath = '') => __awaiter(this, void 0, void
 class StringWritable extends stream.Writable {
     constructor(options) {
         super(options);
-        this.value = '';
-    }
-    _write(data, encoding, callback) {
-        this.value += data;
-        if (callback) {
-            callback();
-        }
-    }
-    toString() {
-        return this.value;
     }
 }
 ;

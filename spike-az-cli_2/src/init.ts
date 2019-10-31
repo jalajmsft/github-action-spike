@@ -10,7 +10,7 @@ const run = async () => {
 
     try {
         if (process.env.RUNNER_OS != 'Linux') {
-            core.setFailed('Please use Linux OS as a runner.');
+            core.setFailed('Please use Linux based OS as a runner.');
             return;
         }
         let inlineScript: string = core.getInput('inlineScript');

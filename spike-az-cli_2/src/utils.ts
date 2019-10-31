@@ -64,21 +64,8 @@ export const executeScript = async (command: string, toolPath: string = ''): Pro
 }
 
 class StringWritable extends stream.Writable {
-    private value: string = '';
 
     constructor(options: any) {
         super(options);
-    }
-
-    _write(data: any, encoding: string, callback: Function): void {
-
-        this.value += data;
-        if (callback) {
-            callback();
-        }
-    }
-
-    toString(): string {
-        return this.value;
     }
 };

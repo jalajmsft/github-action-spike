@@ -24,7 +24,7 @@ const bashArg = 'bash --noprofile --norc -eo pipefail';
 const run = () => __awaiter(this, void 0, void 0, function* () {
     try {
         if (process.env.RUNNER_OS != 'Linux') {
-            core.setFailed('Please use Linux OS as a runner.');
+            core.setFailed('Please use Linux based OS as a runner.');
             return;
         }
         let inlineScript = core.getInput('inlineScript');
