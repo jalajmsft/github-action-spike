@@ -36,7 +36,7 @@ export const getAllAzCliVersions = async (): Promise<Array<string>> => {
     var errorStream: string = '';
     var error1: string = '';
     try {
-        await executeCommand(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, {
+        await executeCommand(`curl --lation -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, {
             outStream: new StringWritable({ decodeStrings: false }),
             errorStream: new StringWritable({ decodeStrings: false }),
             listeners: {
