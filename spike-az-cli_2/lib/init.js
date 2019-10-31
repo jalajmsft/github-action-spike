@@ -38,13 +38,13 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             core.setFailed('Please enter a valid azure cli version.');
             return;
         }
-        if (!checkIfFileExists(scriptPath, 'sh')) {
-            core.setFailed('Please enter a valid script file path.');
-            return;
-        }
         let bashCommand = '';
         let dockerCommand = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure `;
         if (scriptPath) {
+            if (!checkIfFileExists(scriptPath, 'sh')) {
+                core.setFailed('Please enter a valid script file path.');
+                return;
+            }
             yield giveExecutablePermissionsToFile(scriptPath);
             bashCommand = ` ${bashArg} /github/workspace/${scriptPath} `;
         }

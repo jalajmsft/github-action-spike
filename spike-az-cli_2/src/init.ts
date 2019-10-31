@@ -27,14 +27,13 @@ const run = async () => {
             return;
         }
 
-        if (!checkIfFileExists(scriptPath, 'sh')) {
-            core.setFailed('Please enter a valid script file path.');
-            return;
-        }
-
         let bashCommand: string = '';
         let dockerCommand: string = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace -v /home/runner/.azure:/root/.azure `;
         if (scriptPath) {
+            if (!checkIfFileExists(scriptPath, 'sh')) {
+                core.setFailed('Please enter a valid script file path.');
+                return;
+            }
             await giveExecutablePermissionsToFile(scriptPath);
             bashCommand = ` ${bashArg} /github/workspace/${scriptPath} `;
         } else if (inlineScript) {
