@@ -22,12 +22,12 @@ const run = async () => {
         let scriptPath: string = core.getInput('scriptPath');
         let azcliversion: string = core.getInput('azcliversion').trim();
 
-        if(! (await checkIfValidVersion(azcliversion))){
+        if (!(await checkIfValidVersion(azcliversion))) {
             core.setFailed('Please enter a valid azure cli version.');
             return;
         }
 
-        if(!checkIfFileExists(scriptPath, 'sh')){
+        if (!checkIfFileExists(scriptPath, 'sh')) {
             core.setFailed('Please enter a valid script file path.');
             return;
         }
@@ -45,7 +45,13 @@ const run = async () => {
             bashCommand = ` ${bashArg} /_temp/${fileName} `;
         }
         dockerCommand += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
-        await executeCommand(dockerCommand,{silent:true}, dockerPath);
+        var outStream:string = '';
+        await executeCommand(dockerCommand, {
+            outStream: new StringWritable({ decodeStrings: false }),
+            listeners: {
+                stdout: (data: Buffer) => outStream += data.toString()
+            }}, dockerPath);
+        console.log(outStream);
         console.log("az script ran successfully.");
     } catch (error) {
         console.log("az script failed, Please check the script.", error);
@@ -53,17 +59,17 @@ const run = async () => {
     }
 };
 
-const checkIfValidVersion = async (azcliversion:string): Promise<boolean> => {
+const checkIfValidVersion = async (azcliversion: string): Promise<boolean> => {
     const allVersions: Array<string> = await getAllAzCliVersions();
-    for (let i = allVersions.length-1; i>=0; i--){
-        if (allVersions[i].trim() === azcliversion){
+    for (let i = allVersions.length - 1; i >= 0; i--) {
+        if (allVersions[i].trim() === azcliversion) {
             return true;
         }
     }
     return false;
 }
 
-const giveExecutablePermissionsToFile = async (filePath: string) => await executeCommand(`chmod +x ${filePath}`, {silent:true})
+const giveExecutablePermissionsToFile = async (filePath: string) => await executeCommand(`chmod +x ${filePath}`, { silent: true })
 
 const getScriptFileName = () => {
     const fileName: string = `AZ_CLI_GITHUB_ACTION_${getCurrentTime().toString()}.sh`;
@@ -89,19 +95,19 @@ const executeCommand = async (command: string, execOptions = {}, toolPath?: stri
 }
 
 const getAllAzCliVersions = async (): Promise<Array<string>> => {
-    var outStream:string = '';
+    var outStream: string = '';
     try {
-        await exec.exec(`curl --loion -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {
-                        outStream: new StringWritable({ decodeStrings: false }), 
-                        listeners:{
-                            stdout: (data: Buffer) => outStream += data.toString()
-                        }
-                    });
-        if (outStream && JSON.parse(outStream).tags){
+        await exec.exec(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {
+            outStream: new StringWritable({ decodeStrings: false }),
+            listeners: {
+                stdout: (data: Buffer) => outStream += data.toString()
+            }
+        });
+        if (outStream && JSON.parse(outStream).tags) {
             return JSON.parse(outStream).tags;
         }
     }
-    catch (error){
+    catch (error) {
         throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream = ${outStream}, error = ${error}`);
     }
     return [];
@@ -117,12 +123,12 @@ const checkIfFileExists = (filePath: string, fileExtension: string): boolean => 
 class StringWritable extends stream.Writable {
     private value: string = '';
 
-    constructor(options:any) {
+    constructor(options: any) {
         super(options);
     }
 
     _write(data: any, encoding: string, callback: Function): void {
-        
+
         this.value += data;
         if (callback) {
             callback();
@@ -133,25 +139,5 @@ class StringWritable extends stream.Writable {
         return this.value;
     }
 };
-
-// function handleExecResult(execResult: tr.IExecResult, file: string): void {
-//     if (execResult.code != tl.TaskResult.Succeeded) {
-//         tl.debug('execResult: ' + JSON.stringify(execResult));
-//         const message: string = 'Extraction failed for file: ' + file +
-//             '\ncode: ' + execResult.code +
-//             '\nstdout: ' + execResult.stdout +
-//             '\nstderr: ' + execResult.stderr +
-//             '\nerror: ' + execResult.error;
-//         throw new UnzipError(message);
-//     }
-// }
-
-const getOptions = () =>  {
-    const execOptions = <any> {
-        outStream: new StringWritable({ decodeStrings: false })
-    };
-
-    return execOptions;
-}
 
 run();

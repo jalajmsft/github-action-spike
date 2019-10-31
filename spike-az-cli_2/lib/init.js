@@ -56,7 +56,14 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             bashCommand = ` ${bashArg} /_temp/${fileName} `;
         }
         dockerCommand += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
-        yield executeCommand(dockerCommand, { silent: true }, dockerPath);
+        var outStream = '';
+        yield executeCommand(dockerCommand, {
+            outStream: new StringWritable({ decodeStrings: false }),
+            listeners: {
+                stdout: (data) => outStream += data.toString()
+            }
+        }, dockerPath);
+        console.log(outStream);
         console.log("az script ran successfully.");
     }
     catch (error) {
@@ -97,7 +104,7 @@ const executeCommand = (command, execOptions = {}, toolPath) => __awaiter(this, 
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
     try {
-        yield exec.exec(`curl --loion -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {
+        yield exec.exec(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], {
             outStream: new StringWritable({ decodeStrings: false }),
             listeners: {
                 stdout: (data) => outStream += data.toString()
@@ -134,21 +141,4 @@ class StringWritable extends stream.Writable {
     }
 }
 ;
-// function handleExecResult(execResult: tr.IExecResult, file: string): void {
-//     if (execResult.code != tl.TaskResult.Succeeded) {
-//         tl.debug('execResult: ' + JSON.stringify(execResult));
-//         const message: string = 'Extraction failed for file: ' + file +
-//             '\ncode: ' + execResult.code +
-//             '\nstdout: ' + execResult.stdout +
-//             '\nstderr: ' + execResult.stderr +
-//             '\nerror: ' + execResult.error;
-//         throw new UnzipError(message);
-//     }
-// }
-const getOptions = () => {
-    const execOptions = {
-        outStream: new StringWritable({ decodeStrings: false })
-    };
-    return execOptions;
-};
 run();
