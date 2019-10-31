@@ -33,19 +33,31 @@ export const executeCommand = async (command: string, execOptions = {}, toolPath
 
 export const getAllAzCliVersions = async (): Promise<Array<string>> => {
     var outStream: string = '';
+    var errorStream: string = '';
+    var error1: string = '';
     try {
         await executeCommand(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, {
             outStream: new StringWritable({ decodeStrings: false }),
+            errorStream: new StringWritable({ decodeStrings: false }),
             listeners: {
-                stdout: (data: Buffer) => outStream += data.toString()
+                stdout: (data: Buffer) => outStream += data.toString(),
+                stderrt: (data: Buffer) => errorStream += data.toString()
             }
         });
+
         if (outStream && JSON.parse(outStream).tags) {
             return JSON.parse(outStream).tags;
         }
     }
     catch (error) {
+        error1 = error;
         throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream = ${outStream}, error = ${error}`);
+    }
+    finally{
+        
+        console.log(outStream);
+        console.log(errorStream);
+        console.log(error1);
     }
     return [];
 }
@@ -65,6 +77,8 @@ export const executeDockerScript = async (dockerCommand:string) => {
         console.log(outStream);
     }catch(error){
         console.log(outStream);
+        console.log(errorStream);
+        console.log(error);
         throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\n\nDocker logs...\n${errorStream}.`);
     }
 }

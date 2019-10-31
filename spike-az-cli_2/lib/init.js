@@ -45,6 +45,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
                                     -v /home/runner/.azure:/root/.azure 
                                     -v ${utils_1.pathToTempDirectory}:/_temp
                                     mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
+        console.log(command);
         yield utils_1.executeDockerScript(command);
         console.log("az script ran successfully.");
     }

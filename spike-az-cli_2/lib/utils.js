@@ -44,11 +44,15 @@ exports.executeCommand = (command, execOptions = {}, toolPath) => __awaiter(this
 });
 exports.getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
+    var errorStream = '';
+    var error1 = '';
     try {
         yield exports.executeCommand(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, {
             outStream: new StringWritable({ decodeStrings: false }),
+            errorStream: new StringWritable({ decodeStrings: false }),
             listeners: {
-                stdout: (data) => outStream += data.toString()
+                stdout: (data) => outStream += data.toString(),
+                stderrt: (data) => errorStream += data.toString()
             }
         });
         if (outStream && JSON.parse(outStream).tags) {
@@ -56,7 +60,13 @@ exports.getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* ()
         }
     }
     catch (error) {
+        error1 = error;
         throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream = ${outStream}, error = ${error}`);
+    }
+    finally {
+        console.log(outStream);
+        console.log(errorStream);
+        console.log(error1);
     }
     return [];
 });
@@ -77,6 +87,8 @@ exports.executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0,
     }
     catch (error) {
         console.log(outStream);
+        console.log(errorStream);
+        console.log(error);
         throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\n\nDocker logs...\n${errorStream}.`);
     }
 });

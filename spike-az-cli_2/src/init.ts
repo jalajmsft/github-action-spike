@@ -33,6 +33,7 @@ const run = async () => {
                                     -v /home/runner/.azure:/root/.azure 
                                     -v ${pathToTempDirectory}:/_temp
                                     mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
+                                    console.log(command);
         await executeDockerScript(command);
         console.log("az script ran successfully.");
     } catch (error) {

@@ -13,8 +13,8 @@ jobs:
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.Azure_cred_login_obj }}
-    - name: Checkout
-      uses: actions/checkout@v1
+    # - name: Checkout
+    #   uses: actions/checkout@v1
     # - run : 
     #     chmod +x ./sampleScript.sh
     #     ./sampleScript.sh
