@@ -45,7 +45,7 @@ const run = async () => {
         await executeScript(dockerCommand);
         console.log("az script ran successfully.");
     } catch (error) {
-        console.log("az CLI GitHub action failed.\n\n", error);
+        console.log("az CLI GitHub action failed.\n\n",error);
         core.setFailed(error.stderr);
     }
 };
@@ -65,7 +65,7 @@ const executeScript = async (dockerCommand:string) => {
         console.log(outStream);
     }catch(error){
         console.log(outStream);
-        throw new Error(`az CLI script failed, Please check the script.\n\n\n Please refer the script error at the end after docker logs.\n ${errorStream}.`);
+        throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\n\nDocker logs...\n${errorStream}.`);
     }
 }
 
