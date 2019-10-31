@@ -52,7 +52,7 @@ const checkIfValidVersion = async (azcliversion: string): Promise<boolean> => {
 
 const getAllAzCliVersions = async (): Promise<Array<string>> => {
 
-    const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/li`);
+    const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`);
     console.log("ot = ", outStream);
     console.log("errr = ", errorStream);
     console.log("er = ", errorCaught);

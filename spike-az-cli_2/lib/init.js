@@ -62,7 +62,7 @@ const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, fu
     return false;
 });
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
-    const { outStream, errorStream, errorCaught } = yield utils_1.executeScript(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/li`);
+    const { outStream, errorStream, errorCaught } = yield utils_1.executeScript(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`);
     console.log("ot = ", outStream);
     console.log("errr = ", errorStream);
     console.log("er = ", errorCaught);
