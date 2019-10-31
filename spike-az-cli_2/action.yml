@@ -3,8 +3,7 @@ description: 'Az cli spike'
 inputs:
   inlineScript:  # id of input
     description: 'az cli command'
-    required: false
-    default: 'az account show; az --version'
+    required: true
   scriptPath:
     description: 'path of the script'
     required: false
