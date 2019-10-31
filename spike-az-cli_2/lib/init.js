@@ -53,7 +53,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
     }
 });
 const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
-    const allVersions = yield exports.getAllAzCliVersions();
+    const allVersions = yield getAllAzCliVersions();
     for (let i = allVersions.length - 1; i >= 0; i--) {
         if (allVersions[i].trim() === azcliversion) {
             return true;
@@ -61,8 +61,11 @@ const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, fu
     }
     return false;
 });
-exports.getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
+const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     const { outStream, errorStream, errorCaught } = yield utils_1.executeScript(`curl --lation -s https://mcr.microsoft.com/v2/azure-cli/tags/list`);
+    console.log("ot = ", outStream);
+    console.log("errr = ", errorStream);
+    console.log("er = ", errorCaught);
     if (outStream && JSON.parse(outStream).tags) {
         return JSON.parse(outStream).tags;
     }
@@ -72,6 +75,9 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
     const dockerPath = yield io.which("docker", true);
     const { outStream, errorStream, errorCaught } = yield utils_1.executeScript(dockerCommand, dockerPath);
     console.log(outStream);
+    console.log("ot = ", outStream);
+    console.log("errr = ", errorStream);
+    console.log("er = ", errorCaught);
     if (errorCaught) {
         throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\n\nDocker logs...\n${errorStream}.`);
     }
