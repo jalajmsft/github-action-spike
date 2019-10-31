@@ -3,7 +3,7 @@ import * as exec from '@actions/exec';
 import * as path from 'path';
 import * as os from 'os';
 
-export const pathToTempDirectory: string = process.env.RUNNER_TEMP || os.tmpdir();
+export const tempDirectory: string = process.env.RUNNER_TEMP || os.tmpdir();
 
 export interface ExecuteScriptModel {
     outStream: string;
@@ -20,8 +20,7 @@ export const giveExecutablePermissionsToFile = async (filePath: string): Promise
 
 export const getScriptFileName = (): FileNameModel => {
     const fileName: string = `AZ_CLI_GITHUB_ACTION_${getCurrentTime().toString()}.sh`;
-    const tempDirectory: string = pathToTempDirectory;
-    const fullPath: string = path.join(tempDirectory, path.basename(fileName));
+    const fullPath: string = path.join(tempDirectory, fileName);
     return { fileName, fullPath };
 }
 
@@ -64,8 +63,22 @@ export const executeScript = async (command: string, toolPath: string = ''): Pro
 }
 
 class StringWritable extends stream.Writable {
+    private value: string = '';
 
     constructor(options: any) {
         super(options);
+    }
+
+    _write(data: any, encoding: string, callback: Function): void {
+
+        this.value += data;
+        console.log("data", data);
+        if (callback) {
+            callback();
+        }
+    }
+
+    toString(): string {
+        return this.value;
     }
 };

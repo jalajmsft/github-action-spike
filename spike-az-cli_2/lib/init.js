@@ -17,7 +17,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const fs = __importStar(require("fs"));
-const path = __importStar(require("path"));
 const io = __importStar(require("@actions/io"));
 const utils_1 = require("./utils");
 const bashArg = 'bash --noprofile --norc -eo pipefail';
@@ -39,11 +38,11 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             return;
         }
         const { fileName, fullPath } = utils_1.getScriptFileName();
-        fs.writeFileSync(path.join(fullPath), `${inlineScript}`);
+        fs.writeFileSync(fullPath, `${inlineScript}`);
         yield utils_1.giveExecutablePermissionsToFile(fullPath);
         let bashCommand = ` ${bashArg} /_temp/${fileName} `;
         let command = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace `;
-        command += ` -v /home/runner/.azure:/root/.azure -v ${utils_1.pathToTempDirectory}:/_temp `;
+        command += ` -v /home/runner/.azure:/root/.azure -v ${utils_1.tempDirectory}:/_temp `;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
         yield executeDockerScript(command);
         console.log("az script ran successfully.");

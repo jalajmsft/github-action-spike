@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as io from '@actions/io';
-import { getScriptFileName, giveExecutablePermissionsToFile, executeScript, pathToTempDirectory, ExecuteScriptModel, FileNameModel } from './utils';
+import { getScriptFileName, giveExecutablePermissionsToFile, executeScript, tempDirectory, ExecuteScriptModel, FileNameModel } from './utils';
 
 const bashArg = 'bash --noprofile --norc -eo pipefail';
 
@@ -26,12 +26,12 @@ const run = async () => {
             return;
         }
         const { fileName, fullPath } = <FileNameModel>getScriptFileName();
-        fs.writeFileSync(path.join(fullPath), `${inlineScript}`);
+        fs.writeFileSync(fullPath, `${inlineScript}`);
         await giveExecutablePermissionsToFile(fullPath);
 
         let bashCommand: string = ` ${bashArg} /_temp/${fileName} `;
         let command: string = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace `;
-        command += ` -v /home/runner/.azure:/root/.azure -v ${pathToTempDirectory}:/_temp `;
+        command += ` -v /home/runner/.azure:/root/.azure -v ${tempDirectory}:/_temp `;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
         await executeDockerScript(command);
         console.log("az script ran successfully.");

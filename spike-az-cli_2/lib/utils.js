@@ -19,14 +19,13 @@ const stream = require("stream");
 const exec = __importStar(require("@actions/exec"));
 const path = __importStar(require("path"));
 const os = __importStar(require("os"));
-exports.pathToTempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
+exports.tempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
 ;
 ;
 exports.giveExecutablePermissionsToFile = (filePath) => __awaiter(this, void 0, void 0, function* () { return yield exports.executeCommand(`chmod +x ${filePath}`, { silent: true }); });
 exports.getScriptFileName = () => {
     const fileName = `AZ_CLI_GITHUB_ACTION_${exports.getCurrentTime().toString()}.sh`;
-    const tempDirectory = exports.pathToTempDirectory;
-    const fullPath = path.join(tempDirectory, path.basename(fileName));
+    const fullPath = path.join(exports.tempDirectory, fileName);
     return { fileName, fullPath };
 };
 exports.getCurrentTime = () => {
@@ -67,6 +66,17 @@ exports.executeScript = (command, toolPath = '') => __awaiter(this, void 0, void
 class StringWritable extends stream.Writable {
     constructor(options) {
         super(options);
+        this.value = '';
+    }
+    _write(data, encoding, callback) {
+        this.value += data;
+        console.log("data", data);
+        if (callback) {
+            callback();
+        }
+    }
+    toString() {
+        return this.value;
     }
 }
 ;
