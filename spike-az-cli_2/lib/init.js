@@ -62,14 +62,14 @@ const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, fu
     return false;
 });
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
-    const { outStream, errorStream, errorCaught } = yield utils_1.executeScript(`curl --lation -s https://mcr.microsoft.com/v2/azure-cli/tags/list`);
+    const { outStream, errorStream, errorCaught } = yield utils_1.executeScript(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/li`);
     console.log("ot = ", outStream);
     console.log("errr = ", errorStream);
     console.log("er = ", errorCaught);
     if (outStream && JSON.parse(outStream).tags) {
         return JSON.parse(outStream).tags;
     }
-    throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream = ${outStream}, error = ${errorCaught}`);
+    throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream contains ${outStream}, error = ${errorStream}\n${errorCaught}`);
 });
 const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, function* () {
     const dockerPath = yield io.which("docker", true);
