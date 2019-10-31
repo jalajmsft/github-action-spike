@@ -1,7 +1,8 @@
 import * as core from '@actions/core';
 import * as fs from 'fs';
 import * as path from 'path';
-import {getScriptFileName, giveExecutablePermissionsToFile, executeDockerScript, pathToTempDirectory, getAllAzCliVersions} from './utils';
+import * as io from '@actions/io';
+import {getScriptFileName, giveExecutablePermissionsToFile, executeScript, pathToTempDirectory, ExecuteScriptModel, FileNameModel} from './utils';
 
 const bashArg = 'bash --noprofile --norc -eo pipefail';
 
@@ -23,7 +24,7 @@ const run = async () => {
             core.setFailed('Please enter a valid script.');
             return;
         }
-        const { fileName, fullPath } = getScriptFileName();
+        const { fileName, fullPath } = <FileNameModel>getScriptFileName();
         fs.writeFileSync(path.join(fullPath), `${inlineScript}`);
         await giveExecutablePermissionsToFile(fullPath);
 
@@ -41,12 +42,29 @@ const run = async () => {
 
 const checkIfValidVersion = async (azcliversion: string): Promise<boolean> => {
     const allVersions: Array<string> = await getAllAzCliVersions();
-    for (let i = allVersions.length - 1; i >= 0; i--) {
+    for (let i:number = allVersions.length - 1; i >= 0; i--) {
         if (allVersions[i].trim() === azcliversion) {
             return true;
         }
     }
     return false;
+}
+
+export const getAllAzCliVersions = async (): Promise<Array<string>> => {
+    const {outStream, errorStream, errorCaught} = <ExecuteScriptModel>await executeScript(`curl --lation -s https://mcr.microsoft.com/v2/azure-cli/tags/list`);
+    if (outStream && JSON.parse(outStream).tags) {
+        return JSON.parse(outStream).tags;
+    }
+    throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream = ${outStream}, error = ${errorCaught}`);
+}
+
+const executeDockerScript = async (dockerCommand:string):Promise<void> => {
+    const dockerPath: string = await io.which("docker", true);
+    const {outStream, errorStream, errorCaught} = <ExecuteScriptModel>await executeScript(dockerCommand, dockerPath);
+    console.log(outStream);
+    if (errorCaught){
+        throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\n\nDocker logs...\n${errorStream}.`);
+    }
 }
 
 run();

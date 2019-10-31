@@ -18,6 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
+const io = __importStar(require("@actions/io"));
 const utils_1 = require("./utils");
 const bashArg = 'bash --noprofile --norc -eo pipefail';
 const run = () => __awaiter(this, void 0, void 0, function* () {
@@ -43,7 +44,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         let command = `run --workdir /github/workspace -v ${process.env.GITHUB_WORKSPACE}:/github/workspace `;
         command += ` -v /home/runner/.azure:/root/.azure -v ${utils_1.pathToTempDirectory}:/_temp `;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
-        yield utils_1.executeDockerScript(command);
+        yield executeDockerScript(command);
         console.log("az script ran successfully.");
     }
     catch (error) {
@@ -52,12 +53,27 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
     }
 });
 const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
-    const allVersions = yield utils_1.getAllAzCliVersions();
+    const allVersions = yield exports.getAllAzCliVersions();
     for (let i = allVersions.length - 1; i >= 0; i--) {
         if (allVersions[i].trim() === azcliversion) {
             return true;
         }
     }
     return false;
+});
+exports.getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
+    const { outStream, errorStream, errorCaught } = yield utils_1.executeScript(`curl --lation -s https://mcr.microsoft.com/v2/azure-cli/tags/list`);
+    if (outStream && JSON.parse(outStream).tags) {
+        return JSON.parse(outStream).tags;
+    }
+    throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream = ${outStream}, error = ${errorCaught}`);
+});
+const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, function* () {
+    const dockerPath = yield io.which("docker", true);
+    const { outStream, errorStream, errorCaught } = yield utils_1.executeScript(dockerCommand, dockerPath);
+    console.log(outStream);
+    if (errorCaught) {
+        throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\n\nDocker logs...\n${errorStream}.`);
+    }
 });
 run();

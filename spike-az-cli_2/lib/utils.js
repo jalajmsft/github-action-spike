@@ -17,10 +17,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const stream = require("stream");
 const exec = __importStar(require("@actions/exec"));
-const io = __importStar(require("@actions/io"));
 const path = __importStar(require("path"));
 const os = __importStar(require("os"));
 exports.pathToTempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
+;
+;
 exports.giveExecutablePermissionsToFile = (filePath) => __awaiter(this, void 0, void 0, function* () { return yield exports.executeCommand(`chmod +x ${filePath}`, { silent: true }); });
 exports.getScriptFileName = () => {
     const fileName = `AZ_CLI_GITHUB_ACTION_${exports.getCurrentTime().toString()}.sh`;
@@ -42,54 +43,25 @@ exports.executeCommand = (command, execOptions = {}, toolPath) => __awaiter(this
         throw new Error(error);
     }
 });
-exports.getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
+exports.executeScript = (command, toolPath = '') => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
     var errorStream = '';
-    var error1 = '';
+    var errorCaught = '';
     try {
-        yield exports.executeCommand(`curl --lation -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, {
-            outStream: new StringWritable({ decodeStrings: false }),
-            errStream: new StringWritable({ decodeStrings: false }),
-            listeners: {
-                stdout: (data) => outStream += data.toString(),
-                stderrt: (data) => errorStream += data.toString()
-            }
-        });
-        if (outStream && JSON.parse(outStream).tags) {
-            return JSON.parse(outStream).tags;
-        }
-    }
-    catch (error) {
-        error1 = error;
-        throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream = ${outStream}, error = ${error}`);
-    }
-    finally {
-        console.log("out => ", outStream);
-        console.log("err => ", errorStream);
-        console.log("er => ", error1);
-    }
-    return [];
-});
-exports.executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, function* () {
-    const dockerPath = yield io.which("docker", true);
-    var outStream = '';
-    var errorStream = '';
-    try {
-        yield exports.executeCommand(dockerCommand, {
+        yield exports.executeCommand(command, {
             outStream: new StringWritable({ decodeStrings: false }),
             errStream: new StringWritable({ decodeStrings: false }),
             listeners: {
                 stdout: (data) => outStream += data.toString(),
                 stderr: (data) => errorStream += data.toString()
             }
-        }, dockerPath);
-        console.log(outStream);
+        }, toolPath);
     }
     catch (error) {
-        console.log("out => ", outStream);
-        console.log("err => ", errorStream);
-        console.log("er => ", error);
-        throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\n\nDocker logs...\n${errorStream}.`);
+        error = error;
+    }
+    finally {
+        return { outStream, errorStream, errorCaught };
     }
 });
 class StringWritable extends stream.Writable {
