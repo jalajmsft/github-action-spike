@@ -69,8 +69,9 @@ class StringWritable extends stream.Writable {
         this.value = '';
     }
     _write(data, encoding, callback) {
-        this.value += data;
+        this.value += data.toString();
         console.log("data", data);
+        console.log("val", this.value);
         if (callback) {
             callback();
         }
