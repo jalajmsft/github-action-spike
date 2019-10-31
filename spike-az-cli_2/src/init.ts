@@ -28,12 +28,12 @@ const run = async () => {
         await giveExecutablePermissionsToFile(fullPath);
 
         let bashCommand: string = ` ${bashArg} /_temp/${fileName} `;
-        let command: string = `run --workdir /github/workspace 
-                                    -v ${process.env.GITHUB_WORKSPACE}:/github/workspace 
-                                    -v /home/runner/.azure:/root/.azure 
-                                    -v ${pathToTempDirectory}:/_temp
-                                    mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
-                                    console.log(command);
+        let command: string = `run --workdir /github/workspace `;
+        command += ` -v ${process.env.GITHUB_WORKSPACE}:/github/workspace `;
+        command += ` -v /home/runner/.azure:/root/.azure `;
+        command += ` -v ${pathToTempDirectory}:/_temp `;
+        command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
+        console.log(command);
         await executeDockerScript(command);
         console.log("az script ran successfully.");
     } catch (error) {

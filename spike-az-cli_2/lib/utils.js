@@ -64,9 +64,9 @@ exports.getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* ()
         throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream = ${outStream}, error = ${error}`);
     }
     finally {
-        console.log(outStream);
-        console.log(errorStream);
-        console.log(error1);
+        console.log("out => ", outStream);
+        console.log("err => ", errorStream);
+        console.log("er => ", error1);
     }
     return [];
 });
@@ -86,9 +86,9 @@ exports.executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0,
         console.log(outStream);
     }
     catch (error) {
-        console.log(outStream);
-        console.log(errorStream);
-        console.log(error);
+        console.log("out => ", outStream);
+        console.log("err => ", errorStream);
+        console.log("er => ", error);
         throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\n\nDocker logs...\n${errorStream}.`);
     }
 });

@@ -40,11 +40,11 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         fs.writeFileSync(path.join(fullPath), `${inlineScript}`);
         yield utils_1.giveExecutablePermissionsToFile(fullPath);
         let bashCommand = ` ${bashArg} /_temp/${fileName} `;
-        let command = `run --workdir /github/workspace 
-                                    -v ${process.env.GITHUB_WORKSPACE}:/github/workspace 
-                                    -v /home/runner/.azure:/root/.azure 
-                                    -v ${utils_1.pathToTempDirectory}:/_temp
-                                    mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
+        let command = `run --workdir /github/workspace `;
+        command += ` -v ${process.env.GITHUB_WORKSPACE}:/github/workspace `;
+        command += ` -v /home/runner/.azure:/root/.azure `;
+        command += ` -v ${utils_1.pathToTempDirectory}:/_temp `;
+        command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
         console.log(command);
         yield utils_1.executeDockerScript(command);
         console.log("az script ran successfully.");

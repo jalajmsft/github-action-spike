@@ -55,9 +55,9 @@ export const getAllAzCliVersions = async (): Promise<Array<string>> => {
     }
     finally{
         
-        console.log(outStream);
-        console.log(errorStream);
-        console.log(error1);
+        console.log("out => ",outStream);
+        console.log("err => ",errorStream);
+        console.log("er => ",error1);
     }
     return [];
 }
@@ -76,9 +76,9 @@ export const executeDockerScript = async (dockerCommand:string) => {
         }}, dockerPath);
         console.log(outStream);
     }catch(error){
-        console.log(outStream);
-        console.log(errorStream);
-        console.log(error);
+        console.log("out => ",outStream);
+        console.log("err => ",errorStream);
+        console.log("er => ",error);
         throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\n\nDocker logs...\n${errorStream}.`);
     }
 }
