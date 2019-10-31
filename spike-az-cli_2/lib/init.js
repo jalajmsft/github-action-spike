@@ -66,10 +66,15 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     console.log("ot = ", outStream);
     console.log("errr = ", errorStream);
     console.log("er = ", errorCaught);
-    if (outStream && JSON.parse(outStream).tags) {
-        return JSON.parse(outStream).tags;
+    try {
+        if (outStream && JSON.parse(outStream).tags) {
+            return JSON.parse(outStream).tags;
+        }
     }
-    throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream contains ${outStream}, error = ${errorStream}\n${errorCaught}`);
+    catch (error) {
+        throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream contains ${outStream}, error = ${errorStream}\n${errorCaught}`);
+    }
+    return [];
 });
 const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, function* () {
     const dockerPath = yield io.which("docker", true);

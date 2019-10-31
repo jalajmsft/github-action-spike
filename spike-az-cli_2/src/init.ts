@@ -51,14 +51,19 @@ const checkIfValidVersion = async (azcliversion: string): Promise<boolean> => {
 }
 
 const getAllAzCliVersions = async (): Promise<Array<string>> => {
+
     const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/li`);
-    console.log("ot = ",outStream );
-    console.log("errr = ",errorStream );
-    console.log("er = ",errorCaught );
-    if (outStream && JSON.parse(outStream).tags) {
-        return JSON.parse(outStream).tags;
+    console.log("ot = ", outStream);
+    console.log("errr = ", errorStream);
+    console.log("er = ", errorCaught);
+    try{
+        if (outStream && JSON.parse(outStream).tags) {
+            return JSON.parse(outStream).tags;
+        }
+    } catch (error) {
+        throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream contains ${outStream}, error = ${errorStream}\n${errorCaught}`);
     }
-    throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream contains ${outStream}, error = ${errorStream}\n${errorCaught}`);
+    return [];
 }
 
 const executeDockerScript = async (dockerCommand: string): Promise<void> => {
