@@ -67,12 +67,7 @@ const executeScript = (dockerCommand) => __awaiter(this, void 0, void 0, functio
     const dockerPath = yield io.which("docker", true);
     var outStream = '';
     try {
-        yield executeCommand(dockerCommand, {
-            outStream: new StringWritable({ decodeStrings: false }),
-            listeners: {
-                stdout: (data) => outStream += data.toString()
-            }
-        }, dockerPath);
+        yield executeCommand(dockerCommand, {}, dockerPath);
         console.log(outStream);
     }
     catch (error) {
