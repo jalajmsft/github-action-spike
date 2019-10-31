@@ -63,9 +63,8 @@ const executeScript = async (dockerCommand:string) => {
             stderr: (data: Buffer) => errorStream += data.toString()
         }}, dockerPath);
         console.log(outStream);
-        console.log(errorStream);
     }catch(error){
-        throw new Error(`az CLI script failed, Please check the script. ${outStream}. Error = ${errorStream}. error = ${error}`);
+        throw new Error(`az CLI script failed, Please check the script. ${outStream}. Error = ${errorStream}.`);
     }
 }
 

@@ -77,10 +77,9 @@ const executeScript = (dockerCommand) => __awaiter(this, void 0, void 0, functio
             }
         }, dockerPath);
         console.log(outStream);
-        console.log(errorStream);
     }
     catch (error) {
-        throw new Error(`az CLI script failed, Please check the script. ${outStream}. Error = ${errorStream}. error = ${error}`);
+        throw new Error(`az CLI script failed, Please check the script. ${outStream}. Error = ${errorStream}.`);
     }
 });
 const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
