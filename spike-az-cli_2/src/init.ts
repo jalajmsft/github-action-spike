@@ -53,11 +53,19 @@ const run = async () => {
 const executeScript = async (dockerCommand:string) => {
     const dockerPath: string = await io.which("docker", true);
     var outStream:string = '';
+    var errorStream:string = '';
     try{
-        await executeCommand(dockerCommand, {}, dockerPath);
+        await executeCommand(dockerCommand, {
+        outStream: new StringWritable({ decodeStrings: false }),
+        errStream: new StringWritable({ decodeStrings: false }),
+        listeners: {
+            stdout: (data: Buffer) => outStream += data.toString(),
+            stderr: (data: Buffer) => errorStream += data.toString()
+        }}, dockerPath);
         console.log(outStream);
+        console.log(errorStream);
     }catch(error){
-        throw new Error(`az CLI script failed, Please check the script. ${outStream}. Error = ${error}`);
+        throw new Error(`az CLI script failed, Please check the script. ${outStream}. Error = ${errorStream}. error = ${error}`);
     }
 }
 

@@ -66,12 +66,21 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
 const executeScript = (dockerCommand) => __awaiter(this, void 0, void 0, function* () {
     const dockerPath = yield io.which("docker", true);
     var outStream = '';
+    var errorStream = '';
     try {
-        yield executeCommand(dockerCommand, {}, dockerPath);
+        yield executeCommand(dockerCommand, {
+            outStream: new StringWritable({ decodeStrings: false }),
+            errStream: new StringWritable({ decodeStrings: false }),
+            listeners: {
+                stdout: (data) => outStream += data.toString(),
+                stderr: (data) => errorStream += data.toString()
+            }
+        }, dockerPath);
         console.log(outStream);
+        console.log(errorStream);
     }
     catch (error) {
-        throw new Error(`az CLI script failed, Please check the script. ${outStream}. Error = ${error}`);
+        throw new Error(`az CLI script failed, Please check the script. ${outStream}. Error = ${errorStream}. error = ${error}`);
     }
 });
 const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
