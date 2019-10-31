@@ -7,7 +7,8 @@ name: AzureCLIAction
 jobs:
 
   build-and-deploy:
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: macOS-latest
     steps:
 
     - uses: azure/login@v1
@@ -18,11 +19,11 @@ jobs:
     # - run : 
     #     chmod +x ./sampleScript.sh
     #     ./sampleScript.sh
-    # - name: Az cli spike
-    #   uses: ./spike-az-cli_2
-    #   with:
-    #     azcliversion: 2.0.56
-    #     inlineScript: 'az account show ; az --version;pwd;ls'
+    - name: Az cli spike
+      uses: ./spike-az-cli_2
+      with:
+        azcliversion: 2.0.56
+        inlineScript: 'az account show ; az --version;pwd;ls'
         # scriptPath: 'sampleScript.sh'
     # - run: |
     #     docker run -i --workdir /github/workspace -v /home/runner/work/github-action-spike/github-action-spike/:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli bash /home/runner/work/github-action-spike/github-action-spike/sampleScript.sh
@@ -41,5 +42,3 @@ jobs:
         # inlineScript: 'echo "what is your name?" remark="az --version" echo "I am $remark too!" $remark az webapp list --query "[?state==\'Running\']" az account show';
     - name: Az cli spike
       uses: ./spike-az-cli_2
-      with:
-        inlineScript:   '                            '                         
