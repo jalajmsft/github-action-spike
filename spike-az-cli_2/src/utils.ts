@@ -16,12 +16,12 @@ export interface FileNameModel {
     fullPath: string;
 };
 
-export const giveExecutablePermissionsToFile = async (filePath: string):Promise<void> => await executeCommand(`chmod +x ${filePath}`, { silent: true })
+export const giveExecutablePermissionsToFile = async (filePath: string): Promise<void> => await executeCommand(`chmod +x ${filePath}`, { silent: true })
 
 export const getScriptFileName = (): FileNameModel => {
     const fileName: string = `AZ_CLI_GITHUB_ACTION_${getCurrentTime().toString()}.sh`;
     const tempDirectory: string = pathToTempDirectory;
-    const fullPath:string = path.join(tempDirectory, path.basename(fileName));
+    const fullPath: string = path.join(tempDirectory, path.basename(fileName));
     return { fileName, fullPath };
 }
 
@@ -29,7 +29,7 @@ export const getCurrentTime = (): number => {
     return new Date().getTime();
 }
 
-export const executeCommand = async (command: string, execOptions = {}, toolPath?: string):Promise<void> => {
+export const executeCommand = async (command: string, execOptions = {}, toolPath?: string): Promise<void> => {
     try {
         if (toolPath) {
             command = `"${toolPath}" ${command}`;
@@ -41,24 +41,24 @@ export const executeCommand = async (command: string, execOptions = {}, toolPath
     }
 }
 
-export const executeScript = async (command:string, toolPath:string = ''): Promise<ExecuteScriptModel> => {
-    var outStream:string = '';
-    var errorStream:string = '';
-    var errorCaught:string = '';
-    try{
+export const executeScript = async (command: string, toolPath: string = ''): Promise<ExecuteScriptModel> => {
+    var outStream: string = '';
+    var errorStream: string = '';
+    var errorCaught: string = '';
+    try {
         await executeCommand(command, {
-                outStream: new StringWritable({ decodeStrings: false }),
-                errStream: new StringWritable({ decodeStrings: false }),
-                listeners: {
-                    stdout: (data: Buffer) => outStream += data.toString(),
-                    stderr: (data: Buffer) => errorStream += data.toString()
-                }
-            }, toolPath);
+            outStream: new StringWritable({ decodeStrings: false }),
+            errStream: new StringWritable({ decodeStrings: false }),
+            listeners: {
+                stdout: (data: Buffer) => outStream += data.toString(),
+                stderr: (data: Buffer) => errorStream += data.toString()
+            }
+        }, toolPath);
     }
-    catch(error){
-        error = error;
+    catch (error) {
+        errorCaught = error;
     }
-    finally{
+    finally {
         return { outStream, errorStream, errorCaught };
     }
 }

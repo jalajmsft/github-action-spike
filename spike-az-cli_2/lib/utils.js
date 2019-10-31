@@ -58,7 +58,7 @@ exports.executeScript = (command, toolPath = '') => __awaiter(this, void 0, void
         }, toolPath);
     }
     catch (error) {
-        error = error;
+        errorCaught = error;
     }
     finally {
         return { outStream, errorStream, errorCaught };
