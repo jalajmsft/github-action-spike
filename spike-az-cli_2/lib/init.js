@@ -30,7 +30,6 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             core.setFailed('Please use Linux OS as a runner.');
             return;
         }
-        const dockerPath = yield io.which("docker", true);
         let inlineScript = core.getInput('inlineScript');
         let scriptPath = core.getInput('scriptPath');
         let azcliversion = core.getInput('azcliversion').trim();
@@ -56,7 +55,18 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             bashCommand = ` ${bashArg} /_temp/${fileName} `;
         }
         dockerCommand += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
-        var outStream = '';
+        yield executeScript(dockerCommand);
+        console.log("az script ran successfully.");
+    }
+    catch (error) {
+        console.log("az CLI GitHub action failed.", error);
+        core.setFailed(error.stderr);
+    }
+});
+const executeScript = (dockerCommand) => __awaiter(this, void 0, void 0, function* () {
+    const dockerPath = yield io.which("docker", true);
+    var outStream = '';
+    try {
         yield executeCommand(dockerCommand, {
             outStream: new StringWritable({ decodeStrings: false }),
             listeners: {
@@ -64,11 +74,9 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             }
         }, dockerPath);
         console.log(outStream);
-        console.log("az script ran successfully.");
     }
     catch (error) {
-        console.log("az script failed, Please check the script.", error);
-        core.setFailed(error.stderr);
+        throw new Error(`az CLI script failed, Please check the script. ${outStream}. Error = ${error}`);
     }
 });
 const checkIfValidVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
