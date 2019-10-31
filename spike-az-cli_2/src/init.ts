@@ -9,10 +9,10 @@ const bashArg = 'bash --noprofile --norc -eo pipefail';
 const run = async () => {
 
     try {
-        if (process.env.RUNNER_OS != 'Linux') {
-            core.setFailed('Please use Linux OS as a runner.');
-            return;
-        }
+        // if (process.env.RUNNER_OS != 'Linux') {
+        //     core.setFailed('Please use Linux OS as a runner.');
+        //     return;
+        // }
         let inlineScript: string = core.getInput('inlineScript');
         let azcliversion: string = core.getInput('azcliversion').trim();
 

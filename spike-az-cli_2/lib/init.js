@@ -23,10 +23,10 @@ const utils_1 = require("./utils");
 const bashArg = 'bash --noprofile --norc -eo pipefail';
 const run = () => __awaiter(this, void 0, void 0, function* () {
     try {
-        if (process.env.RUNNER_OS != 'Linux') {
-            core.setFailed('Please use Linux OS as a runner.');
-            return;
-        }
+        // if (process.env.RUNNER_OS != 'Linux') {
+        //     core.setFailed('Please use Linux OS as a runner.');
+        //     return;
+        // }
         let inlineScript = core.getInput('inlineScript');
         let azcliversion = core.getInput('azcliversion').trim();
         if (!(yield checkIfValidVersion(azcliversion))) {
