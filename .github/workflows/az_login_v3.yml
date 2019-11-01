@@ -43,5 +43,7 @@ jobs:
       uses: ./spike-az-cli_2
       with:
         inlineScript: |
-          az vm create -n jaminda-azcli-t5 -g jaminda-az-cli --image debian --subscription RMDev --authentication-type all --admin-password ${{ secrets.az_cli_test_vm_password }} --admin-username jaminda
+          az group create -l westus -n jaminda-az-cli-test-2
+          az vm create -n jaminda-azcli-t6 -g jaminda-az-cli --image debian --subscription RMDev
+          az vm create -n jaminda-azcli-t6 -g jaminda-az-cli --image debian --subscription RMDev --authentication-type all --admin-password ${{ secrets.az_cli_test_vm_password }} --admin-username jaminda
           az account show
