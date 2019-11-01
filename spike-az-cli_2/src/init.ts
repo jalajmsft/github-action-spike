@@ -4,7 +4,7 @@ import * as io from '@actions/io';
 import * as path from 'path';
 import { createScriptFile, executeScript, TEMP_DIRECTORY, START_SCRIPT_EXECUTION, ExecuteScriptModel } from './utils';
 
-const BASH_ARG: string = `bash --noprofile --norc -eo pipefail -c "echo '${START_SCRIPT_EXECUTION}';`;
+const BASH_ARG: string = `bash --noprofile --norc -eo pipefail -c "echo '${START_SCRIPT_EXECUTION}' >&2;`;
 const CONTAINER_WORKSPACE: string = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY: string = '/_temp';
 
