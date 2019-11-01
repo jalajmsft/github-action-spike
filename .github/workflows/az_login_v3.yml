@@ -44,6 +44,5 @@ jobs:
       with:
         inlineScript: |
           az group create -l westus -n jaminda-az-cli-test-2
-          az vm create -n jaminda-azcli-t6 -g jaminda-az-cli --image debian --subscription RMDev
-          az vm create -n jaminda-azcli-t6 -g jaminda-az-cli --image debian --subscription RMDev --authentication-type all --admin-password ${{ secrets.az_cli_test_vm_password }} --admin-username jaminda
+          az webapp create -n jaminda-azcli-t1 -g jaminda-az-cli -p MyPlan --subscription RMDev
           az account show

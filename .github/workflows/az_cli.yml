@@ -1,0 +1,23 @@
+# File: .github/workflows/az_login_v2.yml
+
+on: [push]
+
+name: Azure/CLI - the actual repo
+
+jobs:
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.Azure_cred_login_obj }}
+
+    - name: Azure cli
+      uses: azure/CLI@v0
+      with:
+        azcliversion: 2.0.68
+        inlineScript: |
+          az account show
+          az --version
