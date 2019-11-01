@@ -93,7 +93,7 @@ class OutstreamStringWritable extends stream.Writable {
     }
 };
 
-class ErrorstreamStringWritable extends stream.Writable {
+export class ErrorstreamStringWritable extends stream.Writable {
     private value: string = '';
 
 
@@ -103,7 +103,6 @@ class ErrorstreamStringWritable extends stream.Writable {
 
     _write(data: any, encoding: string, callback: Function): void {
 
-        console.log(data.toString());
         if(data.toString().trim() === START_SCRIPT_EXECUTION) {
             this.value = '';
         } 

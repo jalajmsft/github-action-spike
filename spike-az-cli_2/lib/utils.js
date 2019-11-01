@@ -98,7 +98,6 @@ class ErrorstreamStringWritable extends stream.Writable {
         this.value = '';
     }
     _write(data, encoding, callback) {
-        console.log(data.toString());
         if (data.toString().trim() === exports.START_SCRIPT_EXECUTION) {
             this.value = '';
         }
@@ -113,4 +112,5 @@ class ErrorstreamStringWritable extends stream.Writable {
         return this.value;
     }
 }
+exports.ErrorstreamStringWritable = ErrorstreamStringWritable;
 ;

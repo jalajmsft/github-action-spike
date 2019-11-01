@@ -90,10 +90,26 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
 });
 const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, function* () {
     const dockerTool = yield io.which("docker", true);
-    const { outStream, errorStream, errorCaught } = yield utils_1.executeScript(dockerCommand, dockerTool);
-    console.log(outStream);
-    if (errorCaught) {
-        throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\nDocker logs...\n${errorStream}.`);
+    //const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(dockerCommand, dockerTool);
+    //console.log(outStream);
+    var execOptions = {
+        outStream: new utils_1.NullOutstreamStringWritable({ decodeStrings: false }),
+        errStream: new utils_1.ErrorstreamStringWritable({ decodeStrings: false }),
+        listeners: {
+            stdout: (data) => console.log(data.toString()),
+        }
+    };
+    try {
+        yield exec.exec(`"${dockerTool}" ${dockerCommand}`, execOptions);
+    }
+    catch (error) {
+        var commandError = execOptions.errStream.toString();
+        if (commandError) {
+            throw new Error(commandError);
+        }
+        else {
+            throw error;
+        }
     }
 });
 run();

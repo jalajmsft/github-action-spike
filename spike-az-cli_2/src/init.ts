@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import stream = require('stream');
 
-import { createScriptFile, executeScript, TEMP_DIRECTORY, START_SCRIPT_EXECUTION, ExecuteScriptModel, NullOutstreamStringWritable } from './utils';
+import { createScriptFile, executeScript, TEMP_DIRECTORY, START_SCRIPT_EXECUTION, ExecuteScriptModel, NullOutstreamStringWritable, ErrorstreamStringWritable } from './utils';
 
 const BASH_ARG: string = `bash --noprofile --norc -eo pipefail -c "echo '${START_SCRIPT_EXECUTION}' >&2;`;
 const CONTAINER_WORKSPACE: string = '/github/workspace';
@@ -89,10 +89,26 @@ const getAllAzCliVersions = async (): Promise<Array<string>> => {
 
 const executeDockerScript = async (dockerCommand: string): Promise<void> => {
     const dockerTool: string = await io.which("docker", true);
-    const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(dockerCommand, dockerTool);
-    console.log(outStream);
-    if (errorCaught) {
-        throw new Error(`az CLI script failed, Please check the script.\nPlease refer the script error at the end after docker logs.\n\nDocker logs...\n${errorStream}.`);
+    //const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(dockerCommand, dockerTool);
+    //console.log(outStream);
+    var execOptions: any = {
+        outStream: new NullOutstreamStringWritable({ decodeStrings: false }),
+        errStream: new ErrorstreamStringWritable({ decodeStrings: false }),
+        listeners: {
+            stdout: (data: any) => console.log(data.toString()),
+            //stderr: (data) => errorStream += data.toString()
+        }
+    };
+
+    try {
+        await exec.exec(`"${dockerTool}" ${dockerCommand}`, execOptions)
+    } catch (error) {
+        var commandError: string = execOptions.errStream.toString();
+        if(commandError) {
+            throw new Error(commandError);
+        } else {
+            throw error;
+        }
     }
 }
 
