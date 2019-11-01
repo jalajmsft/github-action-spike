@@ -52,7 +52,6 @@ exports.executeScript = (command, toolPath = '') => __awaiter(this, void 0, void
     var options = {
         outStream: new OutstreamStringWritable({ decodeStrings: false }),
         errStream: new ErrorstreamStringWritable({ decodeStrings: false }),
-        silent: true
     };
     try {
         yield exports.executeCommand(command, options, toolPath);
@@ -64,6 +63,18 @@ exports.executeScript = (command, toolPath = '') => __awaiter(this, void 0, void
         return { outStream: options.outStream.toString(), errorStream: options.errStream.toString(), errorCaught };
     }
 });
+class NullOutstreamStringWritable extends stream.Writable {
+    constructor(options) {
+        super(options);
+    }
+    _write(data, encoding, callback) {
+        if (callback) {
+            callback();
+        }
+    }
+}
+exports.NullOutstreamStringWritable = NullOutstreamStringWritable;
+;
 class OutstreamStringWritable extends stream.Writable {
     constructor(options) {
         super(options);

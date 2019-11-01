@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import stream = require('stream');
 
-import { createScriptFile, executeScript, TEMP_DIRECTORY, START_SCRIPT_EXECUTION, ExecuteScriptModel } from './utils';
+import { createScriptFile, executeScript, TEMP_DIRECTORY, START_SCRIPT_EXECUTION, ExecuteScriptModel, NullOutstreamStringWritable } from './utils';
 
 const BASH_ARG: string = `bash --noprofile --norc -eo pipefail -c "echo '${START_SCRIPT_EXECUTION}' >&2;`;
 const CONTAINER_WORKSPACE: string = '/github/workspace';
@@ -69,7 +69,7 @@ const getAllAzCliVersions = async (): Promise<Array<string>> => {
     var outStream: string = '';
     var errorStream: string = '';
     var execOptions: any = {
-        outStream: new stream.Writable({ decodeStrings: false }),
+        outStream: new NullOutstreamStringWritable({ decodeStrings: false }),
         listeners: {
             stdout: (data: any) => outStream += data.toString(),
             //stderr: (data) => errorStream += data.toString()

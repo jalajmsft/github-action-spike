@@ -46,7 +46,6 @@ export const executeScript = async (command: string, toolPath: string = ''): Pro
     var options: any = {
         outStream: new OutstreamStringWritable({ decodeStrings: false }),
         errStream: new ErrorstreamStringWritable({ decodeStrings: false }),
-        silent: true
     };
 
     try {
@@ -59,6 +58,19 @@ export const executeScript = async (command: string, toolPath: string = ''): Pro
         return { outStream: options.outStream.toString(), errorStream: options.errStream.toString(), errorCaught };
     }
 }
+
+export class NullOutstreamStringWritable extends stream.Writable {
+
+    constructor(options: any) {
+        super(options);
+    }
+
+    _write(data: any, encoding: string, callback: Function): void {
+        if (callback) {
+            callback();
+        }
+    }
+};
 
 class OutstreamStringWritable extends stream.Writable {
     private value: string = '';
