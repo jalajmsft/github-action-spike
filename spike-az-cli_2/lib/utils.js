@@ -98,12 +98,12 @@ class ErrorstreamStringWritable extends stream.Writable {
         this.value = '';
     }
     _write(data, encoding, callback) {
-        if (data.toString().trim() === exports.START_SCRIPT_EXECUTION) {
-            this.value = '';
-        }
-        else {
-            this.value += data.toString();
-        }
+        // if(data.toString().trim() === START_SCRIPT_EXECUTION) {
+        //     this.value = '';
+        // } 
+        // else {
+        this.value += data.toString();
+        //}
         if (callback) {
             callback();
         }

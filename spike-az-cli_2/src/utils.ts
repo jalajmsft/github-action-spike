@@ -95,19 +95,19 @@ class OutstreamStringWritable extends stream.Writable {
 
 export class ErrorstreamStringWritable extends stream.Writable {
     private value: string = '';
-    
+
     constructor(options: any) {
         super(options);
     }
 
     _write(data: any, encoding: string, callback: Function): void {
 
-        if(data.toString().trim() === START_SCRIPT_EXECUTION) {
-            this.value = '';
-        } 
-        else {
+        // if(data.toString().trim() === START_SCRIPT_EXECUTION) {
+        //     this.value = '';
+        // } 
+        // else {
             this.value += data.toString();
-        }
+        //}
         
         if (callback) {
             callback();
