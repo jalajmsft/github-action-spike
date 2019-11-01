@@ -3,6 +3,7 @@ import * as exec from '@actions/exec';
 import * as io from '@actions/io';
 
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 import stream = require('stream');
 
@@ -67,12 +68,11 @@ const checkIfValidCLIVersion = async (azcliversion: string): Promise<boolean> =>
 
 const getAllAzCliVersions = async (): Promise<Array<string>> => {
     var outStream: string = '';
-    var errorStream: string = '';
+
     var execOptions: any = {
         outStream: new NullOutstreamStringWritable({ decodeStrings: false }),
         listeners: {
-            stdout: (data: any) => outStream += data.toString(),
-            //stderr: (data) => errorStream += data.toString()
+            stdout: (data: any) => outStream += data.toString() + os.EOL,
         }
     };
     
@@ -88,13 +88,11 @@ const getAllAzCliVersions = async (): Promise<Array<string>> => {
 }
 
 const executeDockerScript = async (dockerCommand: string): Promise<void> => {
-    const dockerTool: string = await io.which("docker", true);
-    //const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(dockerCommand, dockerTool);
-    //console.log(outStream);
     var errorStream: string = '';
+
+    const dockerTool: string = await io.which("docker", true);
     var execOptions: any = {
         outStream: new NullOutstreamStringWritable({ decodeStrings: false }),
-        //errStream: new ErrorstreamStringWritable({ decodeStrings: false }),
         listeners: {
             stdout: (data: any) => console.log(data.toString()),
             errline: (data: any) => { 
@@ -102,7 +100,7 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
                     errorStream = '';
                 } 
                 else {
-                    errorStream += data.toString();
+                    errorStream += data.toString() + os.EOL;
                 }
             }
         }
@@ -111,7 +109,6 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
     try {
         await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions)
     } catch (error) {
-        //var commandError: string = execOptions.errStream.toString();
         if(errorStream) {
             console.log("error stream error");
             throw new Error(errorStream);

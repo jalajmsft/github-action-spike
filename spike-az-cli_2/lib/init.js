@@ -18,6 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const exec = __importStar(require("@actions/exec"));
 const io = __importStar(require("@actions/io"));
+const os = __importStar(require("os"));
 const utils_1 = require("./utils");
 const BASH_ARG = `bash --noprofile --norc -eo pipefail -c "echo '${utils_1.START_SCRIPT_EXECUTION}' >&2;`;
 const CONTAINER_WORKSPACE = '/github/workspace';
@@ -70,11 +71,10 @@ const checkIfValidCLIVersion = (azcliversion) => __awaiter(this, void 0, void 0,
 });
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
-    var errorStream = '';
     var execOptions = {
         outStream: new utils_1.NullOutstreamStringWritable({ decodeStrings: false }),
         listeners: {
-            stdout: (data) => outStream += data.toString(),
+            stdout: (data) => outStream += data.toString() + os.EOL,
         }
     };
     try {
@@ -89,13 +89,10 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     return [];
 });
 const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, function* () {
-    const dockerTool = yield io.which("docker", true);
-    //const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(dockerCommand, dockerTool);
-    //console.log(outStream);
     var errorStream = '';
+    const dockerTool = yield io.which("docker", true);
     var execOptions = {
         outStream: new utils_1.NullOutstreamStringWritable({ decodeStrings: false }),
-        //errStream: new ErrorstreamStringWritable({ decodeStrings: false }),
         listeners: {
             stdout: (data) => console.log(data.toString()),
             errline: (data) => {
@@ -103,7 +100,7 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
                     errorStream = '';
                 }
                 else {
-                    errorStream += data.toString();
+                    errorStream += data.toString() + os.EOL;
                 }
             }
         }
@@ -112,7 +109,6 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
         yield exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
     }
     catch (error) {
-        //var commandError: string = execOptions.errStream.toString();
         if (errorStream) {
             console.log("error stream error");
             throw new Error(errorStream);
