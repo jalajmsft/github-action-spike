@@ -4,7 +4,8 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 
-export const tempDirectory: string = process.env.RUNNER_TEMP || os.tmpdir();
+export const TEMP_DIRECTORY: string = process.env.RUNNER_TEMP || os.tmpdir();
+export const START_SCRIPT_EXECUTION: string = 'Starting script execution';
 
 export interface ExecuteScriptModel {
     outStream: string;
@@ -16,7 +17,7 @@ export const giveExecutablePermissionsToFile = async (filePath: string): Promise
 
 export const createScriptFile = async (inlineScript: string): Promise<string> => {
     const fileName: string = `AZ_CLI_GITHUB_ACTION_${getCurrentTime().toString()}.sh`;
-    const filePath: string = path.join(tempDirectory, fileName);
+    const filePath: string = path.join(TEMP_DIRECTORY, fileName);
     fs.writeFileSync(filePath, `${inlineScript}`);
     await giveExecutablePermissionsToFile(filePath);
     return fileName;
@@ -90,7 +91,7 @@ class ErrorstreamStringWritable extends stream.Writable {
     _write(data: any, encoding: string, callback: Function): void {
 
         console.log(data.toString());
-        if(data.toString().trim() === 'Starting script execution') {
+        if(data.toString().trim() === START_SCRIPT_EXECUTION) {
             this.value = '';
         } 
         else {

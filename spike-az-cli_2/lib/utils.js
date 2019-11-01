@@ -20,12 +20,13 @@ const exec = __importStar(require("@actions/exec"));
 const path = __importStar(require("path"));
 const os = __importStar(require("os"));
 const fs = __importStar(require("fs"));
-exports.tempDirectory = process.env.RUNNER_TEMP || os.tmpdir();
+exports.TEMP_DIRECTORY = process.env.RUNNER_TEMP || os.tmpdir();
+exports.START_SCRIPT_EXECUTION = 'Starting script execution';
 ;
 exports.giveExecutablePermissionsToFile = (filePath) => __awaiter(this, void 0, void 0, function* () { return yield exports.executeCommand(`chmod +x ${filePath}`, { silent: true }); });
 exports.createScriptFile = (inlineScript) => __awaiter(this, void 0, void 0, function* () {
     const fileName = `AZ_CLI_GITHUB_ACTION_${exports.getCurrentTime().toString()}.sh`;
-    const filePath = path.join(exports.tempDirectory, fileName);
+    const filePath = path.join(exports.TEMP_DIRECTORY, fileName);
     fs.writeFileSync(filePath, `${inlineScript}`);
     yield exports.giveExecutablePermissionsToFile(filePath);
     return fileName;
@@ -48,30 +49,50 @@ exports.executeScript = (command, toolPath = '') => __awaiter(this, void 0, void
     var outStream = '';
     var errorStream = '';
     var errorCaught = '';
+    var options = {
+        outStream: new OutstreamStringWritable({ decodeStrings: false }),
+        errStream: new ErrorstreamStringWritable({ decodeStrings: false })
+    };
     try {
-        yield exports.executeCommand(command, {
-            outStream: new StringWritable({ decodeStrings: false }),
-            errStream: new StringWritable({ decodeStrings: false }),
-            listeners: {
-                stdout: (data) => outStream += data.toString(),
-                stderr: (data) => errorStream += data.toString()
-            }
-        }, toolPath);
+        yield exports.executeCommand(command, options, toolPath);
     }
     catch (error) {
         errorCaught = error;
     }
     finally {
-        return { outStream, errorStream, errorCaught };
+        return { outStream: options.outStream.toString(), errorStream: options.errStream.toString(), errorCaught };
     }
 });
-class StringWritable extends stream.Writable {
+class OutstreamStringWritable extends stream.Writable {
     constructor(options) {
         super(options);
         this.value = '';
     }
     _write(data, encoding, callback) {
+        console.log(data.toString());
         this.value += data.toString();
+        if (callback) {
+            callback();
+        }
+    }
+    toString() {
+        return this.value;
+    }
+}
+;
+class ErrorstreamStringWritable extends stream.Writable {
+    constructor(options) {
+        super(options);
+        this.value = '';
+    }
+    _write(data, encoding, callback) {
+        console.log(data.toString());
+        if (data.toString().trim() === exports.START_SCRIPT_EXECUTION) {
+            this.value = '';
+        }
+        else {
+            this.value += data.toString();
+        }
         if (callback) {
             callback();
         }

@@ -2,11 +2,12 @@ import * as core from '@actions/core';
 import * as fs from 'fs';
 import * as io from '@actions/io';
 import * as path from 'path';
-import { createScriptFile, giveExecutablePermissionsToFile, executeScript, tempDirectory, ExecuteScriptModel } from './utils';
+import { createScriptFile, executeScript, TEMP_DIRECTORY, START_SCRIPT_EXECUTION, ExecuteScriptModel } from './utils';
 
-const BASH_ARG: string = `bash --noprofile --norc -eo pipefail -c "echo 'Starting script execution';`;
+const BASH_ARG: string = `bash --noprofile --norc -eo pipefail -c "echo '${START_SCRIPT_EXECUTION}';`;
 const CONTAINER_WORKSPACE: string = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY: string = '/_temp';
+
 const run = async () => {
 
     try {
@@ -38,7 +39,7 @@ const run = async () => {
         - volume mount temp directory between host and container, inline script file is created in temp directory
         */
         let command: string = `run --workdir ${CONTAINER_WORKSPACE} -v ${process.env.GITHUB_WORKSPACE}:${CONTAINER_WORKSPACE} `;
-        command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${tempDirectory}:${CONTAINER_TEMP_DIRECTORY} `;
+        command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${TEMP_DIRECTORY}:${CONTAINER_TEMP_DIRECTORY} `;
         command += `-e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE}`;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
 

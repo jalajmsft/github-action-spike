@@ -18,7 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const io = __importStar(require("@actions/io"));
 const utils_1 = require("./utils");
-const BASH_ARG = `bash --noprofile --norc -eo pipefail -c "echo 'Starting script execution';`;
+const BASH_ARG = `bash --noprofile --norc -eo pipefail -c "echo '${utils_1.START_SCRIPT_EXECUTION}';`;
 const CONTAINER_WORKSPACE = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY = '/_temp';
 const run = () => __awaiter(this, void 0, void 0, function* () {
@@ -47,7 +47,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         - volume mount temp directory between host and container, inline script file is created in temp directory
         */
         let command = `run --workdir ${CONTAINER_WORKSPACE} -v ${process.env.GITHUB_WORKSPACE}:${CONTAINER_WORKSPACE} `;
-        command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${utils_1.tempDirectory}:${CONTAINER_TEMP_DIRECTORY} `;
+        command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${utils_1.TEMP_DIRECTORY}:${CONTAINER_TEMP_DIRECTORY} `;
         command += `-e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE}`;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
         yield executeDockerScript(command);
