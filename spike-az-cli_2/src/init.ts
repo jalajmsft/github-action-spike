@@ -101,7 +101,7 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
     };
 
     try {
-        await exec.exec(`"${dockerTool}" ${dockerCommand}`, execOptions)
+        await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions)
     } catch (error) {
         var commandError: string = execOptions.errStream.toString();
         if(commandError) {
@@ -115,3 +115,4 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
 }
 
 run();
+//executeDockerScript("run mcr.microsoft.com/azure-cli:2.0.74 bash -c 'jhxasj'");

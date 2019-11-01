@@ -100,7 +100,7 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
         }
     };
     try {
-        yield exec.exec(`"${dockerTool}" ${dockerCommand}`, execOptions);
+        yield exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
     }
     catch (error) {
         var commandError = execOptions.errStream.toString();
@@ -115,3 +115,4 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
     }
 });
 run();
+//executeDockerScript("run mcr.microsoft.com/azure-cli:2.0.74 bash -c 'jhxasj'");
