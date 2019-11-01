@@ -1,7 +1,11 @@
 import * as core from '@actions/core';
-import * as fs from 'fs';
+import * as exec from '@actions/exec';
 import * as io from '@actions/io';
+
+import * as fs from 'fs';
 import * as path from 'path';
+import stream = require('stream');
+
 import { createScriptFile, executeScript, TEMP_DIRECTORY, START_SCRIPT_EXECUTION, ExecuteScriptModel } from './utils';
 
 const BASH_ARG: string = `bash --noprofile --norc -eo pipefail -c "echo '${START_SCRIPT_EXECUTION}' >&2;`;
@@ -62,14 +66,23 @@ const checkIfValidCLIVersion = async (azcliversion: string): Promise<boolean> =>
 }
 
 const getAllAzCliVersions = async (): Promise<Array<string>> => {
-
-    const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`);
+    var outStream: string = '';
+    var errorStream: string = '';
+    var execOptions: any = {
+        outStream: new stream.Writable({ decodeStrings: false }),
+        listeners: {
+            stdout: (data: any) => outStream += data.toString(),
+            //stderr: (data) => errorStream += data.toString()
+        }
+    };
+    
     try {
+        await exec.exec(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], execOptions)
         if (outStream && JSON.parse(outStream).tags) {
             return JSON.parse(outStream).tags;
         }
     } catch (error) {
-        throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream contains ${outStream}, error = ${errorStream}\n${errorCaught}`);
+        throw new Error(`Unable to fetch all az cli versions, please report it as an issue. Output: ${outStream}, Error: ${error}`);
     }
     return [];
 }

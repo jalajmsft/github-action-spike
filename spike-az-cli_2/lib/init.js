@@ -16,7 +16,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
+const exec = __importStar(require("@actions/exec"));
 const io = __importStar(require("@actions/io"));
+const stream = require("stream");
 const utils_1 = require("./utils");
 const BASH_ARG = `bash --noprofile --norc -eo pipefail -c "echo '${utils_1.START_SCRIPT_EXECUTION}' >&2;`;
 const CONTAINER_WORKSPACE = '/github/workspace';
@@ -68,14 +70,22 @@ const checkIfValidCLIVersion = (azcliversion) => __awaiter(this, void 0, void 0,
     return false;
 });
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
-    const { outStream, errorStream, errorCaught } = yield utils_1.executeScript(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`);
+    var outStream = '';
+    var errorStream = '';
+    var execOptions = {
+        outStream: new stream.Writable({ decodeStrings: false }),
+        listeners: {
+            stdout: (data) => outStream += data.toString(),
+        }
+    };
     try {
+        yield exec.exec(`curl --location -s https://mcr.microsoft.com/v2/azure-cli/tags/list`, [], execOptions);
         if (outStream && JSON.parse(outStream).tags) {
             return JSON.parse(outStream).tags;
         }
     }
     catch (error) {
-        throw new Error(`Unable to fetch all az cli versions, please report it as a issue. outputstream contains ${outStream}, error = ${errorStream}\n${errorCaught}`);
+        throw new Error(`Unable to fetch all az cli versions, please report it as an issue. Output: ${outStream}, Error: ${error}`);
     }
     return [];
 });
