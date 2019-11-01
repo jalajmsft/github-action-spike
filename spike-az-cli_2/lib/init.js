@@ -92,11 +92,13 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
     const dockerTool = yield io.which("docker", true);
     //const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(dockerCommand, dockerTool);
     //console.log(outStream);
+    var errorStream = '';
     var execOptions = {
         outStream: new utils_1.NullOutstreamStringWritable({ decodeStrings: false }),
-        errStream: new utils_1.ErrorstreamStringWritable({ decodeStrings: false }),
+        //errStream: new ErrorstreamStringWritable({ decodeStrings: false }),
         listeners: {
             stdout: (data) => console.log(data.toString()),
+            stderr: (data) => errorStream += data.toString()
         }
     };
     try {
@@ -104,9 +106,9 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
     }
     catch (error) {
         var commandError = execOptions.errStream.toString();
-        if (commandError) {
+        if (errorStream) {
             console.log("error stream error");
-            throw new Error(commandError);
+            throw new Error(errorStream);
         }
         else {
             console.log("thrown error");

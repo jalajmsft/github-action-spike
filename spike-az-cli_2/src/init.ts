@@ -91,12 +91,13 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
     const dockerTool: string = await io.which("docker", true);
     //const { outStream, errorStream, errorCaught } = <ExecuteScriptModel>await executeScript(dockerCommand, dockerTool);
     //console.log(outStream);
+    var errorStream: string = '';
     var execOptions: any = {
         outStream: new NullOutstreamStringWritable({ decodeStrings: false }),
-        errStream: new ErrorstreamStringWritable({ decodeStrings: false }),
+        //errStream: new ErrorstreamStringWritable({ decodeStrings: false }),
         listeners: {
             stdout: (data: any) => console.log(data.toString()),
-            //stderr: (data) => errorStream += data.toString()
+            stderr: (data: any) => errorStream += data.toString()
         }
     };
 
@@ -104,9 +105,9 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
         await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions)
     } catch (error) {
         var commandError: string = execOptions.errStream.toString();
-        if(commandError) {
+        if(errorStream) {
             console.log("error stream error");
-            throw new Error(commandError);
+            throw new Error(errorStream);
         } else {
             console.log("thrown error");
             throw error;
