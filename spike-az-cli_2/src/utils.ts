@@ -95,8 +95,7 @@ class OutstreamStringWritable extends stream.Writable {
 
 export class ErrorstreamStringWritable extends stream.Writable {
     private value: string = '';
-
-
+    
     constructor(options: any) {
         super(options);
     }

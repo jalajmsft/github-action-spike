@@ -105,9 +105,11 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
     catch (error) {
         var commandError = execOptions.errStream.toString();
         if (commandError) {
+            console.log("error stream error");
             throw new Error(commandError);
         }
         else {
+            console.log("thrown error");
             throw error;
         }
     }
