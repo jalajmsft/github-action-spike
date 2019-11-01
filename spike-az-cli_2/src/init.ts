@@ -45,7 +45,7 @@ const run = async () => {
         let command: string = `run --workdir ${CONTAINER_WORKSPACE} -v ${process.env.GITHUB_WORKSPACE}:${CONTAINER_WORKSPACE} `;
         command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${TEMP_DIRECTORY}:${CONTAINER_TEMP_DIRECTORY} `;
         command += `-e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE}`;
-        command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
+        command += ` mcr.microsoft.com/azure-cli:3.4.9 ${bashCommand}`;
 
         await executeDockerScript(command);
         console.log("az script ran successfully.");

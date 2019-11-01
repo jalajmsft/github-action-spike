@@ -50,7 +50,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         let command = `run --workdir ${CONTAINER_WORKSPACE} -v ${process.env.GITHUB_WORKSPACE}:${CONTAINER_WORKSPACE} `;
         command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${utils_1.TEMP_DIRECTORY}:${CONTAINER_TEMP_DIRECTORY} `;
         command += `-e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE}`;
-        command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
+        command += ` mcr.microsoft.com/azure-cli:3.4.9 ${bashCommand}`;
         yield executeDockerScript(command);
         console.log("az script ran successfully.");
     }
