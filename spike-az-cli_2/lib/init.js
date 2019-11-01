@@ -35,6 +35,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             core.setFailed('Please enter a valid azure cli version. \nSee available versions: https://github.com/Azure/azure-cli/releases.');
             return;
         }
+        console.log("inlin scr == ", inlineScript);
         if (!inlineScript.trim()) {
             core.setFailed('Please enter a valid script.');
             return;
@@ -65,12 +66,7 @@ const checkIfValidCLIVersion = (azcliversion) => __awaiter(this, void 0, void 0,
     if (!allVersions) {
         return true;
     }
-    for (let i = allVersions.length - 1; i >= 0; i--) {
-        if (allVersions[i].trim() === azcliversion) {
-            return true;
-        }
-    }
-    return false;
+    return allVersions.some((eachVersion) => eachVersion === azcliversion);
 });
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';

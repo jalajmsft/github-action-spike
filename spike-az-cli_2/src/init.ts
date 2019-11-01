@@ -16,20 +16,20 @@ const run = async () => {
             core.setFailed('Please use Linux based OS as a runner.');
             return;
         }
-        
-        let inlineScript: string = core.getInput('inlineScript', {required:true});
-        let azcliversion: string = core.getInput('azcliversion', {required:true}).trim();
+
+        let inlineScript: string = core.getInput('inlineScript', { required: true });
+        let azcliversion: string = core.getInput('azcliversion', { required: true }).trim();
 
         if (!(await checkIfValidCLIVersion(azcliversion))) {
             core.setFailed('Please enter a valid azure cli version. \nSee available versions: https://github.com/Azure/azure-cli/releases.');
             return;
         }
-
+        console.log("inlin scr == ",inlineScript);
         if (!inlineScript.trim()) {
             core.setFailed('Please enter a valid script.');
             return;
         }
-        const scriptFile:string = await createScriptFile(inlineScript);
+        const scriptFile: string = await createScriptFile(inlineScript);
         let bashCommand: string = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFile} `;
 
         /*
@@ -54,15 +54,10 @@ const run = async () => {
 
 const checkIfValidCLIVersion = async (azcliversion: string): Promise<boolean> => {
     const allVersions: Array<string> = await getAllAzCliVersions();
-    if (!allVersions){
+    if (!allVersions) {
         return true;
     }
-    for (let i: number = allVersions.length - 1; i >= 0; i--) {
-        if (allVersions[i].trim() === azcliversion) {
-            return true;
-        }
-    }
-    return false;
+    return allVersions.some((eachVersion) => eachVersion === azcliversion);
 }
 
 const getAllAzCliVersions = async (): Promise<Array<string>> => {
@@ -94,10 +89,10 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
         outStream: new NullOutstreamStringWritable({ decodeStrings: false }),
         listeners: {
             stdout: (data: any) => console.log(data.toString()), //to log the script output while the script is running.
-            errline: (data: any) => { 
-                if(data.toString().trim() === START_SCRIPT_EXECUTION) {
+            errline: (data: any) => {
+                if (data.toString().trim() === START_SCRIPT_EXECUTION) {
                     errorStream = ''; // Flush the container logs. After this, script error logs will be tracked.
-                } 
+                }
                 else {
                     errorStream += data.toString() + os.EOL;
                 }
@@ -108,7 +103,7 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
     try {
         await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions)
     } catch (error) {
-        if(errorStream) {
+        if (errorStream) {
             throw new Error(errorStream);
         } else {
             throw error;

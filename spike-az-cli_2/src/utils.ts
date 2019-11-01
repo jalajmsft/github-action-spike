@@ -15,7 +15,7 @@ export const createScriptFile = async (inlineScript: string): Promise<string> =>
     return fileName;
 }
 
-export const giveExecutablePermissionsToFile = async (filePath: string): Promise<number> => await exec.exec(`chmod +x ${filePath}`, [],{ silent: true })
+export const giveExecutablePermissionsToFile = async (filePath: string): Promise<number> => await exec.exec(`chmod +x ${filePath}`, [], { silent: true })
 
 export const getCurrentTime = (): number => {
     return new Date().getTime();
