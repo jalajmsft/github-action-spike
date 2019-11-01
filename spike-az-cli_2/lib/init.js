@@ -105,7 +105,7 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
         yield exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
     }
     catch (error) {
-        var commandError = execOptions.errStream.toString();
+        //var commandError: string = execOptions.errStream.toString();
         if (errorStream) {
             console.log("error stream error");
             throw new Error(errorStream);

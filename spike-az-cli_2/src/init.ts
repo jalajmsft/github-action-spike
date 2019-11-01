@@ -104,7 +104,7 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
     try {
         await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions)
     } catch (error) {
-        var commandError: string = execOptions.errStream.toString();
+        //var commandError: string = execOptions.errStream.toString();
         if(errorStream) {
             console.log("error stream error");
             throw new Error(errorStream);
