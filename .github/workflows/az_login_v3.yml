@@ -42,4 +42,6 @@ jobs:
     - name: Az cli spike
       uses: ./spike-az-cli_2
       with:
-        inlineScript: '                               '
+        inlineScript: |
+          az vm create -n jaminda-azcli-t5 -g jaminda-az-cli --image debian --subscription RMDev --authentication-type all --admin-password ${{ secrets.Azure_cred_login_obj }} --admin-username jaminda
+          az account show
