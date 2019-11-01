@@ -45,7 +45,8 @@ export const executeScript = async (command: string, toolPath: string = ''): Pro
     var errorCaught: string = '';
     var options: any = {
         outStream: new OutstreamStringWritable({ decodeStrings: false }),
-        errStream: new ErrorstreamStringWritable({ decodeStrings: false })
+        errStream: new ErrorstreamStringWritable({ decodeStrings: false }),
+        silent: true
     };
 
     try {

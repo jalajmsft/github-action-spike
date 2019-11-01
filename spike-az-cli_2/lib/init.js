@@ -18,7 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const io = __importStar(require("@actions/io"));
 const utils_1 = require("./utils");
-const BASH_ARG = `bash --noprofile --norc -eo pipefail -c "echo '${utils_1.START_SCRIPT_EXECUTION}';`;
+const BASH_ARG = `bash --noprofile --norc -eo pipefail -c "echo '${utils_1.START_SCRIPT_EXECUTION}' >&2;`;
 const CONTAINER_WORKSPACE = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY = '/_temp';
 const run = () => __awaiter(this, void 0, void 0, function* () {

@@ -51,7 +51,8 @@ exports.executeScript = (command, toolPath = '') => __awaiter(this, void 0, void
     var errorCaught = '';
     var options = {
         outStream: new OutstreamStringWritable({ decodeStrings: false }),
-        errStream: new ErrorstreamStringWritable({ decodeStrings: false })
+        errStream: new ErrorstreamStringWritable({ decodeStrings: false }),
+        silent: true
     };
     try {
         yield exports.executeCommand(command, options, toolPath);
