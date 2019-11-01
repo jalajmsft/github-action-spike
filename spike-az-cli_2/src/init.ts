@@ -97,7 +97,14 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
         //errStream: new ErrorstreamStringWritable({ decodeStrings: false }),
         listeners: {
             stdout: (data: any) => console.log(data.toString()),
-            stderr: (data: any) => errorStream += data.toString()
+            stderr: (data: any) => { 
+                if(data.toString().trim() === START_SCRIPT_EXECUTION) {
+                    errorStream = '';
+                } 
+                else {
+                    errorStream += data.toString();
+                }
+            }
         }
     };
 

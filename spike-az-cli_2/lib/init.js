@@ -98,7 +98,14 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
         //errStream: new ErrorstreamStringWritable({ decodeStrings: false }),
         listeners: {
             stdout: (data) => console.log(data.toString()),
-            stderr: (data) => errorStream += data.toString()
+            stderr: (data) => {
+                if (data.toString().trim() === utils_1.START_SCRIPT_EXECUTION) {
+                    errorStream = '';
+                }
+                else {
+                    errorStream += data.toString();
+                }
+            }
         }
     };
     try {
