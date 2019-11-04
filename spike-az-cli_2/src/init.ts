@@ -13,7 +13,7 @@ const CONTAINER_TEMP_DIRECTORY: string = '/_temp';
 
 const run = async () => {
     var fileName:string = '';
-    const CONTAINER_NAME = `MICROSOFT_AZURE_CLI_${getCurrentTime}_CONTAINER`;
+    const CONTAINER_NAME = `MICROSOFT_AZURE_CLI_${getCurrentTime()}_CONTAINER`;
     try {
         if (process.env.RUNNER_OS != 'Linux') {
             core.setFailed('Please use Linux based OS as a runner.');
@@ -58,7 +58,7 @@ const run = async () => {
         const filePath: string = path.join(TEMP_DIRECTORY, fileName);
         await deleteFile(filePath);
         // delete conatinaer
-       // await executeDockerScript(` contianer rm ${CONTAINER_NAME} `);
+        await executeDockerScript(` contianer rm ${CONTAINER_NAME} `);
     }
 };
 

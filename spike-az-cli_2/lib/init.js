@@ -27,7 +27,7 @@ const CONTAINER_WORKSPACE = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY = '/_temp';
 const run = () => __awaiter(this, void 0, void 0, function* () {
     var fileName = '';
-    const CONTAINER_NAME = `MICROSOFT_AZURE_CLI_${utils_1.getCurrentTime}_CONTAINER`;
+    const CONTAINER_NAME = `MICROSOFT_AZURE_CLI_${utils_1.getCurrentTime()}_CONTAINER`;
     try {
         if (process.env.RUNNER_OS != 'Linux') {
             core.setFailed('Please use Linux based OS as a runner.');
@@ -68,7 +68,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         const filePath = path.join(utils_1.TEMP_DIRECTORY, fileName);
         yield utils_1.deleteFile(filePath);
         // delete conatinaer
-        // await executeDockerScript(` contianer rm ${CONTAINER_NAME} `);
+        yield executeDockerScript(` contianer rm ${CONTAINER_NAME} `);
     }
 });
 const checkIfValidCLIVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
