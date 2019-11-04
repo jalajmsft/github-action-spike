@@ -28,6 +28,18 @@ exports.createScriptFile = (inlineScript) => __awaiter(this, void 0, void 0, fun
     yield exports.giveExecutablePermissionsToFile(filePath);
     return fileName;
 });
+exports.deleteFile = (filePath) => __awaiter(this, void 0, void 0, function* () {
+    if (fs.existsSync(filePath)) {
+        try {
+            //delete the publishsetting file created earlier
+            fs.unlinkSync(filePath);
+        }
+        catch (err) {
+            //error while deleting should not result in task failure
+            console.error(err.toString());
+        }
+    }
+});
 exports.giveExecutablePermissionsToFile = (filePath) => __awaiter(this, void 0, void 0, function* () { return yield exec.exec(`chmod +x ${filePath}`, [], { silent: true }); });
 exports.getCurrentTime = () => {
     return new Date().getTime();
