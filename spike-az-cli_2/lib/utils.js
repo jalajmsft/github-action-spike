@@ -21,7 +21,6 @@ const path = __importStar(require("path"));
 const os = __importStar(require("os"));
 const fs = __importStar(require("fs"));
 exports.TEMP_DIRECTORY = process.env.RUNNER_TEMP || os.tmpdir();
-exports.START_SCRIPT_EXECUTION = 'Azure CLI GitHub Action: Starting script execution';
 exports.createScriptFile = (inlineScript) => __awaiter(this, void 0, void 0, function* () {
     const fileName = `AZ_CLI_GITHUB_ACTION_${exports.getCurrentTime().toString()}.sh`;
     const filePath = path.join(exports.TEMP_DIRECTORY, fileName);

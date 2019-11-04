@@ -20,7 +20,8 @@ const exec = __importStar(require("@actions/exec"));
 const io = __importStar(require("@actions/io"));
 const os = __importStar(require("os"));
 const utils_1 = require("./utils");
-const BASH_ARG = `bash --noprofile --norc -eo pipefail -c "echo '${utils_1.START_SCRIPT_EXECUTION}' >&2;`;
+const START_SCRIPT_EXECUTION_MARKER = 'Azure CLI GitHub Action: Starting script execution';
+const BASH_ARG = `bash --noprofile --norc -eo pipefail -c "echo '${START_SCRIPT_EXECUTION_MARKER}' >&2;`;
 const CONTAINER_WORKSPACE = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY = '/_temp';
 const run = () => __awaiter(this, void 0, void 0, function* () {
@@ -30,18 +31,17 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             return;
         }
         let inlineScript = core.getInput('inlineScript', { required: true });
-        let azcliversion = core.getInput('azcliversion', { required: true }).trim();
+        let azcliversion = core.getInput('azcliversion', { required: true }).trim().toLowerCase();
         if (!(yield checkIfValidCLIVersion(azcliversion))) {
             core.setFailed('Please enter a valid azure cli version. \nSee available versions: https://github.com/Azure/azure-cli/releases.');
             return;
         }
-        console.log("inlin scr == ", inlineScript);
         if (!inlineScript.trim()) {
             core.setFailed('Please enter a valid script.');
             return;
         }
         const scriptFile = yield utils_1.createScriptFile(inlineScript);
-        let bashCommand = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFile} `;
+        let startCommand = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFile} `;
         /*
         For the docker run command, we are doing the following
         - Set the working directory for docker continer
@@ -52,7 +52,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         let command = `run --workdir ${CONTAINER_WORKSPACE} -v ${process.env.GITHUB_WORKSPACE}:${CONTAINER_WORKSPACE} `;
         command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${utils_1.TEMP_DIRECTORY}:${CONTAINER_TEMP_DIRECTORY} `;
         command += `-e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE}`;
-        command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${bashCommand}`;
+        command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${startCommand}`;
         yield executeDockerScript(command);
         console.log("az script ran successfully.");
     }
@@ -63,10 +63,10 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
 });
 const checkIfValidCLIVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
     const allVersions = yield getAllAzCliVersions();
-    if (!allVersions) {
+    if (!allVersions || allVersions.length == 0) {
         return true;
     }
-    return allVersions.some((eachVersion) => eachVersion === azcliversion);
+    return allVersions.some((eachVersion) => eachVersion.toLowerCase() === azcliversion);
 });
 const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
@@ -84,7 +84,7 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     }
     catch (error) {
         // if output is 404 page not found, please verify the url
-        throw new Error(`Unable to fetch all az cli versions, please report it as an issue on https://github.com/Azure/CLI/issues. Output: ${outStream}, Error: ${error}`);
+        core.warning(`Unable to fetch all az cli versions, please report it as an issue on https://github.com/Azure/CLI/issues. Output: ${outStream}, Error: ${error}`);
     }
     return [];
 });
@@ -96,7 +96,7 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
         listeners: {
             stdout: (data) => console.log(data.toString()),
             errline: (data) => {
-                if (data.toString().trim() === utils_1.START_SCRIPT_EXECUTION) {
+                if (data.toString().trim() === START_SCRIPT_EXECUTION_MARKER) {
                     errorStream = ''; // Flush the container logs. After this, script error logs will be tracked.
                 }
                 else {
