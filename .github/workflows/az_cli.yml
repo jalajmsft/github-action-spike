@@ -15,7 +15,7 @@ jobs:
         creds: ${{ secrets.Azure_cred_login_obj }}
 
     - name: Azure cli
-      uses: azure/CLI@v0
+      uses: azure/CLI@v0-beta
       with:
         azcliversion: 2.0.68
         inlineScript: |
