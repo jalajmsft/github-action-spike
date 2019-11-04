@@ -58,7 +58,7 @@ const run = async () => {
         const filePath: string = path.join(TEMP_DIRECTORY, fileName);
         await deleteFile(filePath);
         // delete conatinaer
-        await executeDockerScript(` contianer rm ${CONTAINER_NAME} `);
+       // await executeDockerScript(` contianer rm ${CONTAINER_NAME} `);
     }
 };
 

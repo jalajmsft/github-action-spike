@@ -68,7 +68,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         const filePath = path.join(utils_1.TEMP_DIRECTORY, fileName);
         yield utils_1.deleteFile(filePath);
         // delete conatinaer
-        yield executeDockerScript(` contianer rm ${CONTAINER_NAME} `);
+        // await executeDockerScript(` contianer rm ${CONTAINER_NAME} `);
     }
 });
 const checkIfValidCLIVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
