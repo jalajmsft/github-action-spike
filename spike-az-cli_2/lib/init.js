@@ -22,7 +22,7 @@ const os = __importStar(require("os"));
 const path = __importStar(require("path"));
 const utils_1 = require("./utils");
 const START_SCRIPT_EXECUTION_MARKER = 'Azure CLI GitHub Action: Starting script execution';
-const BASH_ARG = `bash --noprofile --norc -eo pipefail -c "echo '${START_SCRIPT_EXECUTION_MARKER}' >&2;`;
+const BASH_ARG = `bash --noprofile --norc -eo pipefail -c `;
 const CONTAINER_WORKSPACE = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY = '/_temp';
 const run = () => __awaiter(this, void 0, void 0, function* () {
@@ -43,6 +43,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             core.setFailed('Please enter a valid script.');
             return;
         }
+        inlineScript = `set -eo; echo '${START_SCRIPT_EXECUTION_MARKER}' >&2; ${inlineScript}`;
         fileName = yield utils_1.createScriptFile(inlineScript);
         let startCommand = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${fileName} `;
         /*
