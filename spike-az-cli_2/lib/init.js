@@ -22,11 +22,11 @@ const os = __importStar(require("os"));
 const path = __importStar(require("path"));
 const utils_1 = require("./utils");
 const START_SCRIPT_EXECUTION_MARKER = 'Azure CLI GitHub Action: Starting script execution';
-const BASH_ARG = `bash --noprofile --norc -eo pipefail -c `;
+const BASH_ARG = `bash --noprofile --norc -e `;
 const CONTAINER_WORKSPACE = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY = '/_temp';
 const run = () => __awaiter(this, void 0, void 0, function* () {
-    var fileName = '';
+    var scriptFileName = '';
     const CONTAINER_NAME = `MICROSOFT_AZURE_CLI_${utils_1.getCurrentTime()}_CONTAINER`;
     try {
         if (process.env.RUNNER_OS != 'Linux') {
@@ -43,9 +43,9 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             core.setFailed('Please enter a valid script.');
             return;
         }
-        inlineScript = `set -eo >&2; echo '${START_SCRIPT_EXECUTION_MARKER}' >&2; ${inlineScript}`;
-        fileName = yield utils_1.createScriptFile(inlineScript);
-        let startCommand = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${fileName} `;
+        inlineScript = ` set -e >&2; echo '${START_SCRIPT_EXECUTION_MARKER}' >&2; ${inlineScript}`;
+        scriptFileName = yield utils_1.createScriptFile(inlineScript);
+        let startCommand = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFileName} `;
         /*
         For the docker run command, we are doing the following
         - Set the working directory for docker continer
@@ -57,7 +57,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${utils_1.TEMP_DIRECTORY}:${CONTAINER_TEMP_DIRECTORY} `;
         command += `-e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE} --name ${CONTAINER_NAME}`;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${startCommand}`;
-        yield executeDockerScript(command);
+        yield executeDockerCommand(command);
         console.log("az script ran successfully.");
     }
     catch (error) {
@@ -66,10 +66,10 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
     }
     finally {
         // clean up
-        const filePath = path.join(utils_1.TEMP_DIRECTORY, fileName);
-        yield utils_1.deleteFile(filePath);
+        const scriptFilePath = path.join(utils_1.TEMP_DIRECTORY, scriptFileName);
+        yield utils_1.deleteFile(scriptFilePath);
         // delete conatinaer
-        yield executeDockerScript(` container rm ${CONTAINER_NAME} `);
+        yield executeDockerCommand(` container rm --force ${CONTAINER_NAME} 1>/dev/null `, true);
     }
 });
 const checkIfValidCLIVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
@@ -99,7 +99,7 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     }
     return [];
 });
-const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, function* () {
+const executeDockerCommand = (dockerCommand, continueOnError = false) => __awaiter(this, void 0, void 0, function* () {
     const dockerTool = yield io.which("docker", true);
     var errorStream = '';
     var execOptions = {
@@ -120,12 +120,16 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
         yield exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
     }
     catch (error) {
-        throw error;
+        if (!continueOnError) {
+            throw error;
+        }
+        core.warning(error);
     }
     finally {
-        if (errorStream) {
+        if (errorStream && !continueOnError) {
             throw new Error(errorStream);
         }
+        core.warning(errorStream);
     }
 });
 run();

@@ -17,6 +17,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const stream = require("stream");
 const exec = __importStar(require("@actions/exec"));
+const core = __importStar(require("@actions/core"));
 const path = __importStar(require("path"));
 const os = __importStar(require("os"));
 const fs = __importStar(require("fs"));
@@ -31,12 +32,10 @@ exports.createScriptFile = (inlineScript) => __awaiter(this, void 0, void 0, fun
 exports.deleteFile = (filePath) => __awaiter(this, void 0, void 0, function* () {
     if (fs.existsSync(filePath)) {
         try {
-            //delete the publishsetting file created earlier
             fs.unlinkSync(filePath);
         }
         catch (err) {
-            //error while deleting should not result in task failure
-            console.error(err.toString());
+            core.warning(err.toString());
         }
     }
 });
