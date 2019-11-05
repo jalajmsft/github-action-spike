@@ -123,7 +123,6 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
     }
     finally {
         if (errorStream) {
-            console.log(errorStream);
             throw new Error(errorStream);
         }
     }
