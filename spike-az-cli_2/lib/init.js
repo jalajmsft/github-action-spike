@@ -126,5 +126,8 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
             throw error;
         }
     }
+    finally {
+        console.log(errorStream);
+    }
 });
 run();

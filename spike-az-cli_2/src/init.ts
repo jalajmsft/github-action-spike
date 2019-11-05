@@ -119,6 +119,9 @@ const executeDockerScript = async (dockerCommand: string): Promise<void> => {
             throw error;
         }
     }
+    finally{
+        console.log(errorStream);
+    }
 }
 
 run();
