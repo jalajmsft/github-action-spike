@@ -20,4 +20,4 @@ jobs:
         azcliversion: 2.0.68
         inlineScript: |
           az account show
-          az --version
+          az storage -h

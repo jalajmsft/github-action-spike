@@ -114,7 +114,7 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
     try {
         await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions)
     } catch (error) {
-        if (!continueOnError){
+        if (!continueOnError) {
             throw error;
         }
         core.warning(error);
