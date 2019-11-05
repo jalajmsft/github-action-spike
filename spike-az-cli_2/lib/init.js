@@ -119,15 +119,13 @@ const executeDockerScript = (dockerCommand) => __awaiter(this, void 0, void 0, f
         yield exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
     }
     catch (error) {
-        if (errorStream) {
-            throw new Error(errorStream);
-        }
-        else {
-            throw error;
-        }
+        throw error;
     }
     finally {
-        console.log(errorStream);
+        if (errorStream) {
+            console.log(errorStream);
+            throw new Error(errorStream);
+        }
     }
 });
 run();

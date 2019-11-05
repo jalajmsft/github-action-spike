@@ -50,4 +50,5 @@ jobs:
       uses: ./spike-az-cli_2
       with:
         inlineScript: |
+          az webapp create -n jaminda-azcli-t5 -g jaminda-az-cli-test-3 -p MyPlan --subscription RMDev
           az ${{ secrets.account }} show
