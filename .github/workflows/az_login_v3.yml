@@ -22,7 +22,7 @@ jobs:
       uses: ./spike-az-cli_2
       with:
         azcliversion: 2.0.56
-        inlineScript: 'chmod +x $GITHUB_WORKSPACE/sampleScript.sh;$GITHUB_WORKSPACE/sampleScript.sh'
+        inlineScript: 'chmod +x $GITHUB_WORKSPACE/sampleScript.sh;$GITHUB_WORKSPACE/sampleScript.sh az'
         # scriptPath: 'sampleScript.sh'
     # - run: |
     #     docker run -i --workdir /github/workspace -v /home/runner/work/github-action-spike/github-action-spike/:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli bash /home/runner/work/github-action-spike/github-action-spike/sampleScript.sh
