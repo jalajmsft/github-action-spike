@@ -57,6 +57,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${utils_1.TEMP_DIRECTORY}:${CONTAINER_TEMP_DIRECTORY} `;
         command += `-e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE} --name ${CONTAINER_NAME}`;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${startCommand}`;
+        console.log(`${START_SCRIPT_EXECUTION_MARKER} via docker image mcr.microsoft.com/azure-cli:${azcliversion}`);
         yield executeDockerCommand(command);
         console.log("az script ran successfully.");
     }
@@ -68,8 +69,8 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         // clean up
         const scriptFilePath = path.join(utils_1.TEMP_DIRECTORY, scriptFileName);
         yield utils_1.deleteFile(scriptFilePath);
-        // delete conatinaer
-        yield executeDockerCommand(` container rm --force ${CONTAINER_NAME} 1>/dev/null `, true);
+        console.log("cleaning up conatiner");
+        yield executeDockerCommand(` container rm --force ${CONTAINER_NAME} `, true);
     }
 });
 const checkIfValidCLIVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
