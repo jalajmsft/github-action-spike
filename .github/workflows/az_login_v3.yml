@@ -43,6 +43,11 @@ jobs:
       uses: ./spike-az-cli_2
       with:
         inlineScript: |
-          az group create -l westus -n jaminda-az-cli-test-2
-          az webapp create -n jaminda-azcli-t1 -g jaminda-az-cli -p MyPlan --subscription RMDev
+          az group create -l westus -n jaminda-az-cli-test-3
+          az webapp create -n jaminda-azcli-t2 -g jaminda-az-cli-test-3 -p MyPlan --subscription RMDev
           az account show
+    - name: Az cli spike
+      uses: ./spike-az-cli_2
+      with:
+        inlineScript: |
+          az ${{ secrets.account }} show

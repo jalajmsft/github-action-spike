@@ -12,7 +12,7 @@ const CONTAINER_WORKSPACE: string = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY: string = '/_temp';
 
 const run = async () => {
-    var fileName:string = '';
+    var fileName: string = '';
     const CONTAINER_NAME = `MICROSOFT_AZURE_CLI_${getCurrentTime()}_CONTAINER`;
     try {
         if (process.env.RUNNER_OS != 'Linux') {
@@ -53,7 +53,7 @@ const run = async () => {
         console.log("Azure CLI action failed.\n\n", error);
         core.setFailed(error.stderr);
     }
-    finally{
+    finally {
         // clean up
         const filePath: string = path.join(TEMP_DIRECTORY, fileName);
         await deleteFile(filePath);
@@ -64,7 +64,7 @@ const run = async () => {
 
 const checkIfValidCLIVersion = async (azcliversion: string): Promise<boolean> => {
     const allVersions: Array<string> = await getAllAzCliVersions();
-    if (!allVersions  || allVersions.length == 0) {
+    if (!allVersions || allVersions.length == 0) {
         return true;
     }
     return allVersions.some((eachVersion) => eachVersion.toLowerCase() === azcliversion);
