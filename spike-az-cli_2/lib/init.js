@@ -43,7 +43,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             core.setFailed('Please enter a valid script.');
             return;
         }
-        inlineScript = `set -eo; echo '${START_SCRIPT_EXECUTION_MARKER}' >&2; ${inlineScript}`;
+        inlineScript = `set -eo >&2; echo '${START_SCRIPT_EXECUTION_MARKER}' >&2; ${inlineScript}`;
         fileName = yield utils_1.createScriptFile(inlineScript);
         let startCommand = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${fileName} `;
         /*

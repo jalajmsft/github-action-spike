@@ -32,7 +32,7 @@ const run = async () => {
             core.setFailed('Please enter a valid script.');
             return;
         }
-        inlineScript = `set -eo; echo '${START_SCRIPT_EXECUTION_MARKER}' >&2; ${inlineScript}`;
+        inlineScript = `set -eo >&2; echo '${START_SCRIPT_EXECUTION_MARKER}' >&2; ${inlineScript}`;
         fileName = await createScriptFile(inlineScript);
         let startCommand: string = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${fileName} `;
 
