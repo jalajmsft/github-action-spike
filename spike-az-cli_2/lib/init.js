@@ -119,7 +119,8 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
         }
     };
     try {
-        yield exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
+        var vl = yield exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
+        console.log("val,", vl);
     }
     catch (error) {
         if (!continueOnError) {
