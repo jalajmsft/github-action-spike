@@ -130,6 +130,9 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
         console.log("exitcode = ", exitCode);
     }
     catch (error) {
+        console.log("catch.. = ", exitCode);
+        console.log("catch.. = ", error);
+        console.log("catch.. = ", errorStream);
         if (!continueOnError) {
             throw error;
         }
