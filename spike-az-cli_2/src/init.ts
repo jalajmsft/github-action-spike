@@ -52,6 +52,8 @@ const run = async () => {
         console.log("az script ran successfully.");
     } catch (error) {
         core.error(error);
+        console.log("vfjdknfjkdnkjfvknd ");
+        core.error(error.toString());
         core.setFailed(error.stderr);
     }
     finally {
@@ -102,17 +104,17 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
         listeners: {
             stdout: (data: any) => console.log(data.toString()), //to log the script output while the script is running.
             errline: (data: string) => {
-                if(!shouldOutputErrorStream){
+                if (!shouldOutputErrorStream) {
                     errorStream += data + os.EOL;
                 }
-                else{
+                else {
                     console.log(data);
                 }
                 if (data.trim() === START_SCRIPT_EXECUTION_MARKER) {
                     shouldOutputErrorStream = true;
                     errorStream = ''; // Flush the container logs. After this, script error logs will be tracked.
                 }
-               
+
             }
         }
     };
@@ -127,7 +129,7 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
     }
     finally {
         if (exitCode !== 0 && !continueOnError) {
-            throw new Error('az cli script failed.');
+            throw new Error(errorStream || 'az cli script failed.');
         }
         core.warning(errorStream)
     }
