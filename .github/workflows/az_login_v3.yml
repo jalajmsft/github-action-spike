@@ -18,11 +18,11 @@ jobs:
     # - run : 
     #     chmod +x ./sampleScript.sh
     #     ./sampleScript.sh
-    - name: Az cli spike
-      uses: ./spike-az-cli_2
-      with:
-        azcliversion: 2.0.56
-        inlineScript: 'chmod +x $GITHUB_WORKSPACE/sampleScript.sh;$GITHUB_WORKSPACE/sampleScript.sh az'
+    # - name: Az cli spike
+    #   uses: ./spike-az-cli_2
+    #   with:
+    #     azcliversion: 2.0.56
+    #     inlineScript: 'chmod +x $GITHUB_WORKSPACE/sampleScript.sh;$GITHUB_WORKSPACE/sampleScript.sh az'
         # scriptPath: 'sampleScript.sh'
     # - run: |
     #     docker run -i --workdir /github/workspace -v /home/runner/work/github-action-spike/github-action-spike/:/github/workspace -v /home/runner/.azure:/root/.azure mcr.microsoft.com/azure-cli bash /home/runner/work/github-action-spike/github-action-spike/sampleScript.sh
@@ -39,15 +39,15 @@ jobs:
     #       echo remark  
     #       az account show
         # inlineScript: 'echo "what is your name?" remark="az --version" echo "I am $remark too!" $remark az webapp list --query "[?state==\'Running\']" az account show';
-    - name: Az cli spike
-      uses: ./spike-az-cli_2
-      with:
-        azcliversion: 2.0.66
-        inlineScript: |
-          az group create -l westus -n jaminda-az-cli-test-3
-          az --version
-          #az webapp create -n jaminda-azcli-t2 -g jaminda-az-cli-test-3 -p MyPlan --subscription RMDev
-          az account show
+    # - name: Az cli spike
+    #   uses: ./spike-az-cli_2
+    #   with:
+    #     azcliversion: 2.0.66
+    #     inlineScript: |
+    #       az group create -l westus -n jaminda-az-cli-test-3
+    #       az --version
+    #       #az webapp create -n jaminda-azcli-t2 -g jaminda-az-cli-test-3 -p MyPlan --subscription RMDev
+    #       az account show
     - name: Az cli spike
       uses: ./spike-az-cli_2
       with:

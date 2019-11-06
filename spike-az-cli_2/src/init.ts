@@ -60,7 +60,7 @@ const run = async () => {
         // clean up
         const scriptFilePath: string = path.join(TEMP_DIRECTORY, scriptFileName);
         await deleteFile(scriptFilePath);
-        console.log("cleaning up container");
+        console.log("cleaning up container...");
         await executeDockerCommand(` container rm --force ${CONTAINER_NAME} `, true);
     }
 };
@@ -127,6 +127,7 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
         console.log("catch.. = ", error);
         console.log("catch.. = ", errorStream );
         if (!continueOnError) {
+            console.log("are we troernejfn", continueOnError);
             throw error;
         }
         core.warning(error);
@@ -134,7 +135,8 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
     finally {
         console.log("exitcode in finally= ", exitCode);
         if (exitCode !== 0 && !continueOnError) {
-            throw new Error(errorStream || 'az cli script failed.');
+            console.log(eeror should be repotrnvfjsnkjfnks);
+            //throw new Error(errorStream || 'az cli script failed.');
         }
         core.warning(errorStream)
     }
