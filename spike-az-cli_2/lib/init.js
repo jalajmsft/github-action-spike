@@ -108,10 +108,12 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
         listeners: {
             stdout: (data) => console.log(data.toString()),
             errline: (data) => {
+                console.log("raw", data);
+                console.log("raw.toString()", data.toString());
                 if (data.toString().trim() === START_SCRIPT_EXECUTION_MARKER) {
                     errorStream = ''; // Flush the container logs. After this, script error logs will be tracked.
                 }
-                else {
+                else if (!data.toString().toLowerCase().startsWith("warning")) {
                     errorStream += data.toString() + os.EOL;
                 }
             }
