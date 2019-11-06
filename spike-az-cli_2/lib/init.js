@@ -111,10 +111,8 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
         listeners: {
             stdout: (data) => console.log(data.toString()),
             errline: (data) => {
-                if (!shouldOutputErrorStream) {
-                    errorStream += data + os.EOL;
-                }
-                else {
+                errorStream += data + os.EOL;
+                if (shouldOutputErrorStream) {
                     console.log(data);
                 }
                 if (data.trim() === START_SCRIPT_EXECUTION_MARKER) {

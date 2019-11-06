@@ -104,10 +104,8 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
         listeners: {
             stdout: (data: any) => console.log(data.toString()), //to log the script output while the script is running.
             errline: (data: string) => {
-                if (!shouldOutputErrorStream) {
-                    errorStream += data + os.EOL;
-                }
-                else {
+                errorStream += data + os.EOL;
+                if (shouldOutputErrorStream) {
                     console.log(data);
                 }
                 if (data.trim() === START_SCRIPT_EXECUTION_MARKER) {
