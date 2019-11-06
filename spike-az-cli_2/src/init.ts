@@ -105,13 +105,14 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
                 if(!shouldOutputErrorStream){
                     errorStream += data + os.EOL;
                 }
-                else if (data.trim() === START_SCRIPT_EXECUTION_MARKER) {
-                    shouldOutputErrorStream = true;
-                    errorStream = ''; // Flush the container logs. After this, script error logs will be tracked.
-                }
                 else{
                     console.log(data);
                 }
+                if (data.trim() === START_SCRIPT_EXECUTION_MARKER) {
+                    shouldOutputErrorStream = true;
+                    errorStream = ''; // Flush the container logs. After this, script error logs will be tracked.
+                }
+               
             }
         }
     };
