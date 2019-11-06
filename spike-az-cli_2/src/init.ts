@@ -53,7 +53,7 @@ const run = async () => {
     } catch (error) {
         console.error("con eror", error);
         core.error(error);
-        core.setFailed(error.stderr);
+        core.setFailed(error);
     }
     finally {
         // clean up
