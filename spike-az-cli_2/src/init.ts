@@ -6,7 +6,6 @@ import * as path from 'path';
 
 import { createScriptFile, TEMP_DIRECTORY, NullOutstreamStringWritable, deleteFile, getCurrentTime } from './utils';
 
-const START_SCRIPT_EXECUTION_MARKER: string = 'Azure CLI GitHub Action: Starting script execution';
 const BASH_ARG: string = `bash --noprofile --norc -e `;
 const CONTAINER_WORKSPACE: string = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY: string = '/_temp';
@@ -32,6 +31,7 @@ const run = async () => {
             core.setFailed('Please enter a valid script.');
             return;
         }
+        const START_SCRIPT_EXECUTION_MARKER: string = `Starting script execution  via docker image mcr.microsoft.com/azure-cli:${azcliversion}`;
         inlineScript = ` set -e >&2; echo '${START_SCRIPT_EXECUTION_MARKER}' >&2; ${inlineScript}`;
         scriptFileName = await createScriptFile(inlineScript);
         let startCommand: string = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFileName} `;
@@ -47,18 +47,18 @@ const run = async () => {
         command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${TEMP_DIRECTORY}:${CONTAINER_TEMP_DIRECTORY} `;
         command += `-e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE} --name ${CONTAINER_NAME}`;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${startCommand}`;
-        console.log(`${START_SCRIPT_EXECUTION_MARKER} via docker image mcr.microsoft.com/azure-cli:${azcliversion}`);
+        console.log(START_SCRIPT_EXECUTION_MARKER);
         await executeDockerCommand(command);
         console.log("az script ran successfully.");
     } catch (error) {
-        console.log("Azure CLI action failed.\n\n", error);
+        core.error(error);
         core.setFailed(error.stderr);
     }
     finally {
         // clean up
         const scriptFilePath: string = path.join(TEMP_DIRECTORY, scriptFileName);
         await deleteFile(scriptFilePath);
-        console.log("cleaning up conatiner");
+        console.log("cleaning up container");
         await executeDockerCommand(` container rm --force ${CONTAINER_NAME} `, true);
     }
 };
