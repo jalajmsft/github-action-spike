@@ -123,6 +123,9 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
         exitCode = await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
         console.log("exitcode = ", exitCode);
     } catch (error) {
+        console.log("catch.. = ", exitCode);
+        console.log("catch.. = ", error);
+        console.log("catch.. = ", errorStream );
         if (!continueOnError) {
             throw error;
         }
