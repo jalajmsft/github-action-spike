@@ -52,8 +52,6 @@ const run = async () => {
         console.log("az script ran successfully.");
     } catch (error) {
         core.error(error);
-        console.log("vfjdknfjkdnkjfvknd ");
-        core.error(error.toString());
         core.setFailed(error.stderr);
     }
     finally {
@@ -121,22 +119,15 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
     var exitCode;
     try {
         exitCode = await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
-        console.log("exitcode = ", exitCode);
     } catch (error) {
-        console.log("catch.. = ", exitCode);
-        console.log("catch.. = ", error);
-        console.log("catch.. = ", errorStream );
         if (!continueOnError) {
-            console.log("are we troernejfn", continueOnError);
             throw error;
         }
         core.warning(error);
     }
     finally {
-        console.log("exitcode in finally= ", exitCode);
         if (exitCode !== 0 && !continueOnError) {
-            console.log('eeror should be repotrnvfjsnkjfnks');
-            //throw new Error(errorStream || 'az cli script failed.');
+            throw new Error(errorStream || 'az cli script failed.');
         }
         core.warning(errorStream)
     }
