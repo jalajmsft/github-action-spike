@@ -51,6 +51,8 @@ const run = async () => {
         await executeDockerCommand(command);
         console.log("az script ran successfully.");
     } catch (error) {
+        console.log("con, ",error)
+        console.log("stack", error.stack);
         core.error(error);
         core.setFailed(error.stderr);
     }
