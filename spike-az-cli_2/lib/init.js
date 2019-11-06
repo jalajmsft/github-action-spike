@@ -21,6 +21,7 @@ const io = __importStar(require("@actions/io"));
 const os = __importStar(require("os"));
 const path = __importStar(require("path"));
 const utils_1 = require("./utils");
+const START_SCRIPT_EXECUTION_MARKER = `Starting script execution via docker image mcr.microsoft.com/azure-cli:`;
 const BASH_ARG = `bash --noprofile --norc -e `;
 const CONTAINER_WORKSPACE = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY = '/_temp';
@@ -42,7 +43,6 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
             core.setFailed('Please enter a valid script.');
             return;
         }
-        const START_SCRIPT_EXECUTION_MARKER = `Starting script execution  via docker image mcr.microsoft.com/azure-cli:${azcliversion}`;
         inlineScript = ` set -e >&2; echo '${START_SCRIPT_EXECUTION_MARKER}' >&2; ${inlineScript}`;
         scriptFileName = yield utils_1.createScriptFile(inlineScript);
         let startCommand = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFileName} `;
@@ -57,11 +57,12 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${utils_1.TEMP_DIRECTORY}:${CONTAINER_TEMP_DIRECTORY} `;
         command += `-e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE} --name ${CONTAINER_NAME}`;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${startCommand}`;
-        console.log(START_SCRIPT_EXECUTION_MARKER);
+        console.log(`${START_SCRIPT_EXECUTION_MARKER}${azcliversion}`);
         yield executeDockerCommand(command);
         console.log("az script ran successfully.");
     }
     catch (error) {
+        console.error("con eror", error);
         core.error(error);
         core.setFailed(error.stderr);
     }
