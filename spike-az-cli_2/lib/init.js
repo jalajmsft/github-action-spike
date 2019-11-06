@@ -63,6 +63,8 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
     }
     catch (error) {
         core.error(error);
+        console.log("vfjdknfjkdnkjfvknd ");
+        core.error(error.toString());
         core.setFailed(error.stderr);
     }
     finally {
@@ -134,7 +136,7 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
     }
     finally {
         if (exitCode !== 0 && !continueOnError) {
-            throw new Error('az cli script failed.');
+            throw new Error(errorStream || 'az cli script failed.');
         }
         core.warning(errorStream);
     }
