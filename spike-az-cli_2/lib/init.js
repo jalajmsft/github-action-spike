@@ -62,7 +62,8 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         console.log("az script ran successfully.");
     }
     catch (error) {
-        core.setFailed(error);
+        core.error(error);
+        core.setFailed(error.stderr);
     }
     finally {
         // clean up
@@ -116,9 +117,9 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
             }
         }
     };
+    var vl;
     try {
-        var vl = yield exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
-        console.log("val,", vl);
+        vl = yield exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
     }
     catch (error) {
         if (!continueOnError) {
@@ -127,6 +128,7 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
         core.warning(error);
     }
     finally {
+        console.log("val,", vl);
         if (errorStream && !continueOnError) {
             throw new Error(errorStream);
         }

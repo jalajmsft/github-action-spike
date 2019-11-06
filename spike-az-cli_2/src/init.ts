@@ -51,7 +51,8 @@ const run = async () => {
         await executeDockerCommand(command);
         console.log("az script ran successfully.");
     } catch (error) {
-        core.setFailed(error);
+        core.error(error);
+        core.setFailed(error.stderr);
     }
     finally {
         // clean up
@@ -109,10 +110,9 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
             }
         }
     };
-
+    var vl;
     try {
-        var vl = await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions)
-        console.log("val,", vl);
+        vl = await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions)
     } catch (error) {
         if (!continueOnError) {
             throw error;
@@ -120,6 +120,7 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
         core.warning(error);
     }
     finally {
+        console.log("val,", vl);
         if (errorStream && !continueOnError) {
             throw new Error(errorStream);
         }

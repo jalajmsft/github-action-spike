@@ -42,7 +42,7 @@ jobs:
     - name: Az cli spike
       uses: ./spike-az-cli_2
       with:
-        azcliversion: 2.0.66
+        #azcliversion: 2.0.66
         inlineScript: |
           az group create -l westus -n jaminda-az-cli-test-3
           az --version
