@@ -142,7 +142,7 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
     finally {
         console.log("exitcode in finally= ", exitCode);
         if (exitCode !== 0 && !continueOnError) {
-            console.log(eeror, should, be, repotrnvfjsnkjfnks);
+            console.log('eeror should be repotrnvfjsnkjfnks');
             //throw new Error(errorStream || 'az cli script failed.');
         }
         core.warning(errorStream);
