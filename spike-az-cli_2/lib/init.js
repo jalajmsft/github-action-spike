@@ -134,7 +134,7 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
     }
     finally {
         if (exitCode !== 0 && !continueOnError) {
-            throw new Error(errorStream || 'az cli script failed.');
+            throw new Error('az cli script failed.');
         }
         core.warning(errorStream);
     }
