@@ -104,8 +104,10 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
         listeners: {
             stdout: (data: any) => console.log(data.toString()), //to log the script output while the script is running.
             errline: (data: string) => {
-                errorStream += data + os.EOL;
-                if (shouldOutputErrorStream) {
+                if (!shouldOutputErrorStream) {
+                    errorStream += data + os.EOL;
+                }
+                else {
                     console.log(data);
                 }
                 if (data.trim() === START_SCRIPT_EXECUTION_MARKER) {
@@ -118,7 +120,8 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
     };
     var exitCode;
     try {
-        exitCode = await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions)
+        exitCode = await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
+        console.log("exitcode = ", exitCode);
     } catch (error) {
         if (!continueOnError) {
             throw error;
@@ -126,6 +129,7 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
         core.warning(error);
     }
     finally {
+        console.log("exitcode in finally= ", exitCode);
         if (exitCode !== 0 && !continueOnError) {
             throw new Error(errorStream || 'az cli script failed.');
         }

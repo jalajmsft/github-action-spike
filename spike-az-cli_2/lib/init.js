@@ -111,8 +111,10 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
         listeners: {
             stdout: (data) => console.log(data.toString()),
             errline: (data) => {
-                errorStream += data + os.EOL;
-                if (shouldOutputErrorStream) {
+                if (!shouldOutputErrorStream) {
+                    errorStream += data + os.EOL;
+                }
+                else {
                     console.log(data);
                 }
                 if (data.trim() === START_SCRIPT_EXECUTION_MARKER) {
@@ -125,6 +127,7 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
     var exitCode;
     try {
         exitCode = yield exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
+        console.log("exitcode = ", exitCode);
     }
     catch (error) {
         if (!continueOnError) {
@@ -133,6 +136,7 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
         core.warning(error);
     }
     finally {
+        console.log("exitcode in finally= ", exitCode);
         if (exitCode !== 0 && !continueOnError) {
             throw new Error(errorStream || 'az cli script failed.');
         }
