@@ -103,25 +103,26 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
 const executeDockerCommand = (dockerCommand, continueOnError = false) => __awaiter(this, void 0, void 0, function* () {
     const dockerTool = yield io.which("docker", true);
     var errorStream = '';
+    var shouldOutputErrorStream = false;
     var execOptions = {
         outStream: new utils_1.NullOutstreamStringWritable({ decodeStrings: false }),
         listeners: {
             stdout: (data) => console.log(data.toString()),
             errline: (data) => {
-                console.log("raw", data);
-                console.log("raw.toString()", data.toString());
-                if (data.toString().trim() === START_SCRIPT_EXECUTION_MARKER) {
+                if (shouldOutputErrorStream) {
+                    console.log(data);
+                }
+                else if (data.trim() === START_SCRIPT_EXECUTION_MARKER) {
+                    shouldOutputErrorStream = true;
                     errorStream = ''; // Flush the container logs. After this, script error logs will be tracked.
                 }
-                else if (!data.toString().toLowerCase().startsWith("warning")) {
-                    errorStream += data.toString() + os.EOL;
-                }
+                errorStream += data + os.EOL;
             }
         }
     };
-    var vl;
+    var exitCode;
     try {
-        vl = yield exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
+        exitCode = yield exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions);
     }
     catch (error) {
         if (!continueOnError) {
@@ -130,11 +131,10 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
         core.warning(error);
     }
     finally {
-        console.log("val,", vl);
-        if (errorStream && !continueOnError) {
+        console.log("val,", exitCode);
+        if (exitCode !== 0 && !continueOnError) {
             throw new Error(errorStream);
         }
-        core.warning(errorStream);
     }
 });
 run();

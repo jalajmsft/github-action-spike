@@ -96,25 +96,26 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
 
     const dockerTool: string = await io.which("docker", true);
     var errorStream: string = '';
+    var shouldOutputErrorStream: boolean = false;
     var execOptions: any = {
         outStream: new NullOutstreamStringWritable({ decodeStrings: false }),
         listeners: {
             stdout: (data: any) => console.log(data.toString()), //to log the script output while the script is running.
-            errline: (data: any) => {
-                console.log("raw", data);
-                console.log("raw.toString()", data.toString());
-                if (data.toString().trim() === START_SCRIPT_EXECUTION_MARKER) {
+            errline: (data: string) => {
+                if(shouldOutputErrorStream){
+                    console.log(data);
+                }
+                else if (data.trim() === START_SCRIPT_EXECUTION_MARKER) {
+                    shouldOutputErrorStream = true;
                     errorStream = ''; // Flush the container logs. After this, script error logs will be tracked.
                 }
-                else if (!data.toString().toLowerCase().startsWith("warning")) {
-                    errorStream += data.toString() + os.EOL;
-                }
+                errorStream += data + os.EOL;
             }
         }
     };
-    var vl;
+    var exitCode;
     try {
-        vl = await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions)
+        exitCode = await exec.exec(`"${dockerTool}" ${dockerCommand}`, [], execOptions)
     } catch (error) {
         if (!continueOnError) {
             throw error;
@@ -122,11 +123,10 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
         core.warning(error);
     }
     finally {
-        console.log("val,", vl);
-        if (errorStream && !continueOnError) {
+        console.log("val,", exitCode);
+        if (exitCode !== 0 && !continueOnError) {
             throw new Error(errorStream);
         }
-        core.warning(errorStream);
     }
 }
 
