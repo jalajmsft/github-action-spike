@@ -109,14 +109,16 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
         listeners: {
             stdout: (data) => console.log(data.toString()),
             errline: (data) => {
-                if (shouldOutputErrorStream) {
-                    console.log(data);
+                if (!shouldOutputErrorStream) {
+                    errorStream += data + os.EOL;
                 }
                 else if (data.trim() === START_SCRIPT_EXECUTION_MARKER) {
                     shouldOutputErrorStream = true;
                     errorStream = ''; // Flush the container logs. After this, script error logs will be tracked.
                 }
-                errorStream += data + os.EOL;
+                else {
+                    console.log(data);
+                }
             }
         }
     };
@@ -135,6 +137,7 @@ const executeDockerCommand = (dockerCommand, continueOnError = false) => __await
         if (exitCode !== 0 && !continueOnError) {
             throw new Error(errorStream);
         }
+        core.warning(errorStream);
     }
 });
 run();
