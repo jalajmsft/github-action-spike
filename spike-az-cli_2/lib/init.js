@@ -62,8 +62,6 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         console.log("az script ran successfully.");
     }
     catch (error) {
-        console.log("con, ", error);
-        console.log("stack", error.stack);
         core.error(error);
         core.setFailed(error.stderr);
     }
