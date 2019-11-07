@@ -47,6 +47,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         scriptFileName = yield utils_1.createScriptFile(inlineScript);
         let startCommand = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFileName} `;
         console.log("fdjnfd", process.env.AZURE_HTTP_USER_AGENT);
+        console.log("fdjnfd", process.env.AZURE_CORE_COLLECT_TELEMETRY);
         /*
         For the docker run command, we are doing the following
         - Set the working directory for docker continer
