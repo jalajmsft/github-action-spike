@@ -20,8 +20,8 @@ jobs:
     #     ./sampleScript.sh
     - run: printenv
     - name: Az cli spike
-      uses: azure/CLI@v0-beta
-      # uses: ./spike-az-cli_2
+      # uses: azure/CLI@v0-beta
+      uses: ./spike-az-cli_2
       with:
         azcliversion: 2.0.56
         inlineScript: 'printenv;chmod +x $GITHUB_WORKSPACE/sampleScript.sh;$GITHUB_WORKSPACE/sampleScript.sh az'
@@ -42,8 +42,8 @@ jobs:
     #       az account show
         # inlineScript: 'echo "what is your name?" remark="az --version" echo "I am $remark too!" $remark az webapp list --query "[?state==\'Running\']" az account show';
     - name: Az cli spike
-      uses: azure/CLI@v0-beta
-      # uses: ./spike-az-cli_2
+      # uses: azure/CLI@v0-beta
+      uses: ./spike-az-cli_2
       with:
         azcliversion: 2.0.66
         inlineScript: |
@@ -52,8 +52,8 @@ jobs:
           #az webapp create -n jaminda-azcli-t2 -g jaminda-az-cli-test-3 -p MyPlan --subscription RMDev
           az account show
     - name: Az cli spike
-      uses: azure/CLI@v0-beta
-      # uses: ./spike-az-cli_2
+      # uses: azure/CLI@v0-beta
+      uses: ./spike-az-cli_2
       with:
         inlineScript: |
           az webapp create -n jaminda-azcli-t5 -g jaminda-az-cli-test-3 -p MyPlan --subscription RMDev
