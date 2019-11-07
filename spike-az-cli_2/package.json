@@ -17,6 +17,7 @@
     "@actions/exec": "^1.0.1",
     "@actions/github": "^1.1.0",
     "@actions/io": "^1.0.1",
+    "pipelines-appservice-lib": "^1.0.8",
     "typed-rest-client": "^1.5.0"
   },
   "directories": {
