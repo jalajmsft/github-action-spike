@@ -25,3 +25,4 @@ jobs:
           realpath ../../out1
     - run: |
         realpath ../../out1
+        cat ../../out1
