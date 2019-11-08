@@ -15,6 +15,7 @@ jobs:
         realpath ../../out
     - run: |
         realpath ../../out
+        cat ../../out
     - name: Az cli spike
       uses: azure/CLI@v0-beta
       #uses: ./spike-az-cli_2
