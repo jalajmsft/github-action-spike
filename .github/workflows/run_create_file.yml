@@ -1,0 +1,15 @@
+# File: .github/workflows/az_login_v2.yml
+
+on: [push]
+
+name: AzureCLIAction
+
+jobs:
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        printenv
+        echo "hello" > out
+        realpath out
