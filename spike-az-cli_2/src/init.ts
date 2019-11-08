@@ -3,6 +3,7 @@ import * as exec from '@actions/exec';
 import * as io from '@actions/io';
 import * as os from 'os';
 import * as path from 'path';
+import * as fs from 'fs';
 
 import { createScriptFile, TEMP_DIRECTORY, NullOutstreamStringWritable, deleteFile, getCurrentTime } from './utils';
 
@@ -34,6 +35,8 @@ const run = async () => {
         }
         inlineScript = ` set -e >&2; echo '${START_SCRIPT_EXECUTION_MARKER}' >&2; ${inlineScript}`;
         scriptFileName = await createScriptFile(inlineScript);
+        const temp: string = path.join(TEMP_DIRECTORY, 'test123');
+        fs.writeFileSync(temp, `this is host`);
         let startCommand: string = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFileName} `;
         console.log("fdjnfd", process.env.AZURE_HTTP_USER_AGENT);
         console.log("fdjnfd", process.env.AZURE_CORE_COLLECT_TELEMETRY);

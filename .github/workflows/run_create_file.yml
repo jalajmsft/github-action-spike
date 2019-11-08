@@ -22,7 +22,10 @@ jobs:
         inlineScript: |
           printenv
           echo "hello" > ../../out1
+          echo "hello2" > out2
           realpath ../../out1
+          cat ../../out1
     - run: |
+        cat out2
         realpath ../../out1
         cat ../../out1
