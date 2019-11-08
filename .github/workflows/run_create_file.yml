@@ -2,7 +2,7 @@
 
 on: [push]
 
-name: AzureCLIAction
+name: RunCreateFile
 
 jobs:
 
@@ -13,3 +13,11 @@ jobs:
         printenv
         echo "hello" > out
         realpath out
+    - name: Az cli spike
+      uses: azure/CLI@v0-beta
+      #uses: ./spike-az-cli_2
+      with:
+        inlineScript: |
+          printenv
+          echo "hello" > out1
+          realpath out1
