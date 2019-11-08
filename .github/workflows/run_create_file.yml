@@ -11,13 +11,17 @@ jobs:
     steps:
     - run: |
         printenv
-        echo "hello" > out
-        realpath out
+        echo "hello" > ../../out
+        realpath ../../out
+    - run: |
+        realpath ../../out
     - name: Az cli spike
       uses: azure/CLI@v0-beta
       #uses: ./spike-az-cli_2
       with:
         inlineScript: |
           printenv
-          echo "hello" > out1
+          echo "hello" > ../../out1
           realpath out1
+    - run: |
+        realpath ../../out1
