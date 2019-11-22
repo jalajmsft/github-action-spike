@@ -32,5 +32,4 @@ jobs:
           printenv
           az account show
           az storage -h
-          
-          
+        
