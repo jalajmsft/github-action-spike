@@ -15,10 +15,20 @@ jobs:
         creds: ${{ secrets.Azure_cred_login_obj }}
 
     - name: Azure cli
-      uses: azure/CLI@v0-beta
+      uses: azure/CLI@v1
       with:
         azcliversion: 2.0.68
         inlineScript: |
+          az account show
+          az storage -h
+          
+          
+    - name: Azure cli
+      uses: azure/CLI@v1.0.1
+      with:
+        azcliversion: 2.0.68
+        inlineScript: |
+          $GITHUB_SHA
           az account show
           az storage -h
           
