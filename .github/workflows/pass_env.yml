@@ -9,11 +9,14 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - run: |
-        pwd
-        printenv > test.sh
     - name: Checkout
       uses: actions/checkout@v1
+    - run: |
+        printenv  
+        pwd
+        printenv > test.sh
+        cat test.sh
+        realpath test.sh
     - name: Az cli spike
       #uses: azure/CLI@v0-beta
       uses: ./spike-az-cli_2
