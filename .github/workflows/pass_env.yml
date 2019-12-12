@@ -1,0 +1,19 @@
+# File: .github/workflows/az_login_v2.yml
+
+on: [push]
+
+name: TestEnvVariable
+
+jobs:
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        printenv
+    - name: Az cli spike
+      #uses: azure/CLI@v0-beta
+      uses: ./spike-az-cli_2
+      with:
+        inlineScript: |
+          printenv
