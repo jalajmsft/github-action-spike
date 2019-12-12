@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - run: |
-        printenv
+        pwd
+        printenv > test.sh
     - name: Checkout
       uses: actions/checkout@v1
     - name: Az cli spike
