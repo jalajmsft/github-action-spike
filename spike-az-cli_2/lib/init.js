@@ -51,10 +51,12 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         let startCommand = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFileName} `;
         let gitHubEnvironmentVaribales = '';
         for (let key in process.env) {
+            console.log("key == ", key);
             if (key.toLowerCase().startsWith("github_") && process.env.key) {
                 gitHubEnvironmentVaribales += ` -e ${key}=${process.env.key} `;
             }
         }
+        console.log(gitHubEnvironmentVaribales);
         /*
         For the docker run command, we are doing the following
         - Set the working directory for docker continer
