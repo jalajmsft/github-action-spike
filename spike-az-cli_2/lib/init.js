@@ -52,8 +52,8 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         let gitHubEnvironmentVaribales = '';
         for (let key in process.env) {
             console.log("key == ", key);
-            if (key.toLowerCase().startsWith("github_") && process.env.key) {
-                gitHubEnvironmentVaribales += ` -e ${key}=${process.env.key} `;
+            if (key.toLowerCase().startsWith("github_") && process.env[key]) {
+                gitHubEnvironmentVaribales += ` -e ${key}=${process.env[key]} `;
             }
         }
         console.log(gitHubEnvironmentVaribales);
