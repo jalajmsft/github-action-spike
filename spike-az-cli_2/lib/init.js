@@ -52,7 +52,7 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         let gitHubEnvironmentVaribales = '';
         for (let key in process.env) {
             console.log("key == ", key);
-            if (key.toLowerCase().startsWith("github_") && process.env[key]) {
+            if (key.toUpperCase().startsWith("GITHUB_") && key.toUpperCase() !== 'GITHUB_WORKSPACE' && process.env[key]) {
                 gitHubEnvironmentVaribales += ` -e ${key}=${process.env[key]} `;
             }
         }
@@ -68,7 +68,6 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${utils_1.TEMP_DIRECTORY}:${CONTAINER_TEMP_DIRECTORY} `;
         command += ` ${gitHubEnvironmentVaribales} `;
         command += ` -e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE} --name ${CONTAINER_NAME} `;
-        // command += ` --env-file=${process.env.GITHUB_WORKSPACE}/test.sh `;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${startCommand}`;
         console.log(`${START_SCRIPT_EXECUTION_MARKER}${azcliversion}`);
         yield executeDockerCommand(command);
