@@ -1,0 +1,16 @@
+# action.yml
+name: 'test docker container'
+description: 'test'
+inputs:
+  name:  # id of input
+    description: 'test for hello world'
+    required: true
+    default: 'World'
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.name }}

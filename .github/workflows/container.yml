@@ -1,0 +1,17 @@
+on: [push]
+
+jobs:
+  sample_job:
+    runs-on: ubuntu-latest
+    name: A job to say hello
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Hello world action step
+      id: hello
+      uses: ./spike-az-cli_2
+      with:
+        name: 'test-name'
+    # Use the output from the `hello` step
+    - name: Get the output time
+      run: echo "The time was ${{ steps.hello.outputs.time }}"
