@@ -9,7 +9,7 @@ jobs:
       uses: actions/checkout@v1
     - name: Hello world action step
       id: hello
-      uses: ./spike-az-cli_2
+      uses: ./spike--az-cli_3
       with:
         name: 'test-name'
     # Use the output from the `hello` step
