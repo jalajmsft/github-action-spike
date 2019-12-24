@@ -4,6 +4,7 @@
   "main": "lib/init.js",
   "scripts": {
     "build": "tsc",
+    "temp": "node test.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

@@ -52,7 +52,8 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         let gitHubEnvironmentVaribales = '';
         for (let key in process.env) {
             console.log("key == ", key);
-            if (key.toUpperCase().startsWith("GITHUB_") && key.toUpperCase() !== 'GITHUB_WORKSPACE' && process.env[key]) {
+            if ((key.toUpperCase().startsWith("GITHUB_") || key.toUpperCase().startsWith("AZURECLI_"))
+                && key.toUpperCase() !== 'GITHUB_WORKSPACE' && process.env[key]) {
                 gitHubEnvironmentVaribales += ` -e ${key}=${process.env[key]} `;
             }
         }

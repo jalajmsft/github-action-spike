@@ -9,6 +9,10 @@ jobs:
       uses: actions/checkout@v1
     - name: Hello world action step
       id: hello
+      env:
+        FIRST_NAME: Mona
+        middle_name: The
+        Last_Name: Octocat
       uses: ./spike--az-cli_3
       with:
         name: 'test-name'
