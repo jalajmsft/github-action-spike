@@ -20,7 +20,6 @@ const exec = __importStar(require("@actions/exec"));
 const io = __importStar(require("@actions/io"));
 const os = __importStar(require("os"));
 const path = __importStar(require("path"));
-const fs = __importStar(require("fs"));
 const utils_1 = require("./utils");
 const START_SCRIPT_EXECUTION_MARKER = `Starting script execution via docker image mcr.microsoft.com/azure-cli:`;
 const BASH_ARG = `bash --noprofile --norc -e `;
@@ -46,18 +45,14 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         }
         inlineScript = ` set -e >&2; echo '${START_SCRIPT_EXECUTION_MARKER}' >&2; ${inlineScript}`;
         scriptFileName = yield utils_1.createScriptFile(inlineScript);
-        const temp = path.join(utils_1.TEMP_DIRECTORY, 'test123');
-        fs.writeFileSync(temp, `this is host`);
         let startCommand = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFileName} `;
-        let gitHubEnvironmentVaribales = '';
+        let gitHubEnvironmentVariables = '';
         for (let key in process.env) {
-            console.log("key == ", key);
-            if ((key.toUpperCase().startsWith("GITHUB_") || key.toUpperCase().startsWith("AZURECLI_"))
-                && key.toUpperCase() !== 'GITHUB_WORKSPACE' && process.env[key]) {
-                gitHubEnvironmentVaribales += ` -e ${key}=${process.env[key]} `;
+            if (key.toUpperCase().startsWith("GITHUB_") && key.toUpperCase() !== 'GITHUB_WORKSPACE' && process.env[key]) {
+                gitHubEnvironmentVariables += ` -e ${key}=${process.env[key]} `;
             }
         }
-        console.log(gitHubEnvironmentVaribales);
+        console.log(gitHubEnvironmentVariables);
         /*
         For the docker run command, we are doing the following
         - Set the working directory for docker continer
@@ -67,8 +62,9 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         */
         let command = `run --workdir ${CONTAINER_WORKSPACE} -v ${process.env.GITHUB_WORKSPACE}:${CONTAINER_WORKSPACE} `;
         command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${utils_1.TEMP_DIRECTORY}:${CONTAINER_TEMP_DIRECTORY} `;
-        command += ` ${gitHubEnvironmentVaribales} `;
-        command += ` -e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE} --name ${CONTAINER_NAME} `;
+        command += ` ${gitHubEnvironmentVariables} `;
+        command += `-e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE} `;
+        command += `--name ${CONTAINER_NAME} `;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${startCommand}`;
         console.log(`${START_SCRIPT_EXECUTION_MARKER}${azcliversion}`);
         yield executeDockerCommand(command);

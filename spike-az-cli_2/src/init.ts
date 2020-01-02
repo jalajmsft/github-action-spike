@@ -3,7 +3,6 @@ import * as exec from '@actions/exec';
 import * as io from '@actions/io';
 import * as os from 'os';
 import * as path from 'path';
-import * as fs from 'fs';
 
 import { createScriptFile, TEMP_DIRECTORY, NullOutstreamStringWritable, deleteFile, getCurrentTime } from './utils';
 
@@ -35,19 +34,14 @@ const run = async () => {
         }
         inlineScript = ` set -e >&2; echo '${START_SCRIPT_EXECUTION_MARKER}' >&2; ${inlineScript}`;
         scriptFileName = await createScriptFile(inlineScript);
-        const temp: string = path.join(TEMP_DIRECTORY, 'test123');
-        fs.writeFileSync(temp, `this is host`);
         let startCommand: string = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFileName} `;
-
-        let gitHubEnvironmentVaribales = '';
+        let gitHubEnvironmentVariables = '';
         for (let key in process.env){
-            console.log("key == ", key);
-            if ( (key.toUpperCase().startsWith("GITHUB_") || key.toUpperCase().startsWith("AZURECLI_")) 
-                    && key.toUpperCase() !== 'GITHUB_WORKSPACE' && process.env[key]){
-                gitHubEnvironmentVaribales += ` -e ${key}=${process.env[key]} `;
+            if (key.toUpperCase().startsWith("GITHUB_") && key.toUpperCase() !== 'GITHUB_WORKSPACE' && process.env[key]){
+                gitHubEnvironmentVariables += ` -e ${key}=${process.env[key]} `;
             }
         }
-        console.log(gitHubEnvironmentVaribales);
+        console.log(gitHubEnvironmentVariables);
         /*
         For the docker run command, we are doing the following
         - Set the working directory for docker continer
@@ -57,8 +51,9 @@ const run = async () => {
         */
         let command: string = `run --workdir ${CONTAINER_WORKSPACE} -v ${process.env.GITHUB_WORKSPACE}:${CONTAINER_WORKSPACE} `;
         command += ` -v ${process.env.HOME}/.azure:/root/.azure -v ${TEMP_DIRECTORY}:${CONTAINER_TEMP_DIRECTORY} `;
-        command += ` ${gitHubEnvironmentVaribales} `;
-        command += ` -e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE} --name ${CONTAINER_NAME} `;
+        command += ` ${gitHubEnvironmentVariables} `;
+        command += `-e GITHUB_WORKSPACE=${CONTAINER_WORKSPACE} `;
+        command += `--name ${CONTAINER_NAME} `;
         command += ` mcr.microsoft.com/azure-cli:${azcliversion} ${startCommand}`;
         console.log(`${START_SCRIPT_EXECUTION_MARKER}${azcliversion}`);
         await executeDockerCommand(command);
@@ -125,7 +120,6 @@ const executeDockerCommand = async (dockerCommand: string, continueOnError: bool
                     shouldOutputErrorStream = true;
                     errorStream = ''; // Flush the container logs. After this, script error logs will be tracked.
                 }
-
             }
         }
     };
