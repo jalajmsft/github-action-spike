@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -25,7 +26,7 @@ const START_SCRIPT_EXECUTION_MARKER = `Starting script execution via docker imag
 const BASH_ARG = `bash --noprofile --norc -e `;
 const CONTAINER_WORKSPACE = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY = '/_temp';
-const run = () => __awaiter(this, void 0, void 0, function* () {
+const run = () => __awaiter(void 0, void 0, void 0, function* () {
     var scriptFileName = '';
     const CONTAINER_NAME = `MICROSOFT_AZURE_CLI_${utils_1.getCurrentTime()}_CONTAINER`;
     try {
@@ -52,7 +53,6 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
                 gitHubEnvironmentVariables += ` -e ${key}=${process.env[key]} `;
             }
         }
-        console.log(gitHubEnvironmentVariables);
         /*
         For the docker run command, we are doing the following
         - Set the working directory for docker continer
@@ -82,14 +82,14 @@ const run = () => __awaiter(this, void 0, void 0, function* () {
         yield executeDockerCommand(` container rm --force ${CONTAINER_NAME} `, true);
     }
 });
-const checkIfValidCLIVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
+const checkIfValidCLIVersion = (azcliversion) => __awaiter(void 0, void 0, void 0, function* () {
     const allVersions = yield getAllAzCliVersions();
     if (!allVersions || allVersions.length == 0) {
         return true;
     }
     return allVersions.some((eachVersion) => eachVersion.toLowerCase() === azcliversion);
 });
-const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
+const getAllAzCliVersions = () => __awaiter(void 0, void 0, void 0, function* () {
     var outStream = '';
     var execOptions = {
         outStream: new utils_1.NullOutstreamStringWritable({ decodeStrings: false }),
@@ -109,7 +109,7 @@ const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     }
     return [];
 });
-const executeDockerCommand = (dockerCommand, continueOnError = false) => __awaiter(this, void 0, void 0, function* () {
+const executeDockerCommand = (dockerCommand, continueOnError = false) => __awaiter(void 0, void 0, void 0, function* () {
     const dockerTool = yield io.which("docker", true);
     var errorStream = '';
     var shouldOutputErrorStream = false;
