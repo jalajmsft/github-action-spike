@@ -27,7 +27,6 @@ jobs:
     - name: Azure cli
       uses: azure/CLI@v1.0.2
       with:
-        azcliversion: 2.0.68
         inlineScript: |
           printenv
           az account show
