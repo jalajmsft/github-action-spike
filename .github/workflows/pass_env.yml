@@ -17,6 +17,10 @@ jobs:
         printenv > test.sh
         cat test.sh
         realpath test.sh
+    
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.Azure_cred_login_obj }}
     - name: Az cli spike
       #uses: azure/CLI@v0-beta
       uses: ./spike-az-cli_2
