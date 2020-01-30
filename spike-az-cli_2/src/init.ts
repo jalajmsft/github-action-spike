@@ -106,15 +106,17 @@ const checkIfEnvironmentVariableIsOmitted = (key: string): boolean => {
         'GOROOT',
         'ANDROID_',
         'GRADLE_',
-        'ANY_',
-        'CHROME_'
+        'ANT_',
+        'CHROME',
+        'SELENIUM_',
+        'INPUT_'
     ];
     for (let i = 0; i < omitEnvironmentVariables.length; i++){
         if (omitEnvironmentVariables[i] === key.toUpperCase()){
             return true;
         }
     }
-    
+
     let matched = omitEnvironmentVariablesWithPrefix.filter((prefix: string) => key.toUpperCase().startsWith(prefix) );
     if (matched.length > 0){
         return true;

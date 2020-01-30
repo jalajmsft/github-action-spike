@@ -20,6 +20,9 @@ jobs:
     - name: Az cli spike
       #uses: azure/CLI@v0-beta
       uses: ./spike-az-cli_2
+      env: 
+        showVariable: show
       with:
         inlineScript: |
           printenv
+          az account $showVariable

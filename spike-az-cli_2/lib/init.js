@@ -115,8 +115,10 @@ const checkIfEnvironmentVariableIsOmitted = (key) => {
         'GOROOT',
         'ANDROID_',
         'GRADLE_',
-        'ANY_',
-        'CHROME_'
+        'ANT_',
+        'CHROME',
+        'SELENIUM_',
+        'INPUT_'
     ];
     for (let i = 0; i < omitEnvironmentVariables.length; i++) {
         if (omitEnvironmentVariables[i] === key.toUpperCase()) {
