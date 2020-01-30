@@ -1,10 +1,9 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -26,7 +25,7 @@ const START_SCRIPT_EXECUTION_MARKER = `Starting script execution via docker imag
 const BASH_ARG = `bash --noprofile --norc -e `;
 const CONTAINER_WORKSPACE = '/github/workspace';
 const CONTAINER_TEMP_DIRECTORY = '/_temp';
-const run = () => __awaiter(void 0, void 0, void 0, function* () {
+const run = () => __awaiter(this, void 0, void 0, function* () {
     var scriptFileName = '';
     const CONTAINER_NAME = `MICROSOFT_AZURE_CLI_${utils_1.getCurrentTime()}_CONTAINER`;
     try {
@@ -49,8 +48,9 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         let startCommand = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFileName} `;
         let gitHubEnvironmentVariables = '';
         for (let key in process.env) {
-            if (key.toUpperCase().startsWith("GITHUB_") && key.toUpperCase() !== 'GITHUB_WORKSPACE' && process.env[key]) {
-                gitHubEnvironmentVariables += ` -e ${key}=${process.env[key]} `;
+            // if (key.toUpperCase().startsWith("GITHUB_") && key.toUpperCase() !== 'GITHUB_WORKSPACE' && process.env[key]){
+            if (!checkIfEnvironmentVariableIsOmitted(key) && process.env[key]) {
+                gitHubEnvironmentVariables += ` -e "${key}=${process.env[key]}" `;
             }
         }
         /*
@@ -82,14 +82,61 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         yield executeDockerCommand(` container rm --force ${CONTAINER_NAME} `, true);
     }
 });
-const checkIfValidCLIVersion = (azcliversion) => __awaiter(void 0, void 0, void 0, function* () {
+const checkIfEnvironmentVariableIsOmitted = (key) => {
+    const omitEnvironmentVariables = [
+        'LANG',
+        'HOSTNAME',
+        'PWD',
+        'HOME',
+        'PYTHON_VERSION',
+        'PYTHON_PIP_VERSION',
+        'SHLVL',
+        'PATH',
+        'GPG_KEY',
+        'CONDA',
+        'AGENT_TOOLSDIRECTORY',
+        'GITHUB_WORKSPACE',
+        'RUNNER_PERFLOG',
+        'RUNNER_WORKSPACE',
+        'RUNNER_TEMP',
+        'RUNNER_TRACKING_ID',
+        'RUNNER_TOOL_CACHE',
+        'DOTNET_SKIP_FIRST_TIME_EXPERIENCE',
+        'JOURNAL_STREAM',
+        'DEPLOYMENT_BASEPATH',
+        'VCPKG_INSTALLATION_ROOT',
+        'PERFLOG_LOCATION_SETTING'
+    ];
+    const omitEnvironmentVariablesWithPrefix = [
+        'JAVA_',
+        'LEIN_',
+        'M2_',
+        'BOOST_',
+        'GOROOT',
+        'ANDROID_',
+        'GRADLE_',
+        'ANY_',
+        'CHROME_'
+    ];
+    for (let i = 0; i < omitEnvironmentVariables.length; i++) {
+        if (omitEnvironmentVariables[i] === key.toUpperCase()) {
+            return true;
+        }
+    }
+    let matched = omitEnvironmentVariablesWithPrefix.filter((prefix) => key.toUpperCase().startsWith(prefix));
+    if (matched.length > 0) {
+        return true;
+    }
+    return false;
+};
+const checkIfValidCLIVersion = (azcliversion) => __awaiter(this, void 0, void 0, function* () {
     const allVersions = yield getAllAzCliVersions();
     if (!allVersions || allVersions.length == 0) {
         return true;
     }
     return allVersions.some((eachVersion) => eachVersion.toLowerCase() === azcliversion);
 });
-const getAllAzCliVersions = () => __awaiter(void 0, void 0, void 0, function* () {
+const getAllAzCliVersions = () => __awaiter(this, void 0, void 0, function* () {
     var outStream = '';
     var execOptions = {
         outStream: new utils_1.NullOutstreamStringWritable({ decodeStrings: false }),
@@ -109,7 +156,7 @@ const getAllAzCliVersions = () => __awaiter(void 0, void 0, void 0, function* ()
     }
     return [];
 });
-const executeDockerCommand = (dockerCommand, continueOnError = false) => __awaiter(void 0, void 0, void 0, function* () {
+const executeDockerCommand = (dockerCommand, continueOnError = false) => __awaiter(this, void 0, void 0, function* () {
     const dockerTool = yield io.which("docker", true);
     var errorStream = '';
     var shouldOutputErrorStream = false;

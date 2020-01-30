@@ -37,11 +37,11 @@ const run = async () => {
         let startCommand: string = ` ${BASH_ARG}${CONTAINER_TEMP_DIRECTORY}/${scriptFileName} `;
         let gitHubEnvironmentVariables = '';
         for (let key in process.env){
-            if (key.toUpperCase().startsWith("GITHUB_") && key.toUpperCase() !== 'GITHUB_WORKSPACE' && process.env[key]){
-                gitHubEnvironmentVariables += ` -e ${key}=${process.env[key]} `;
+            // if (key.toUpperCase().startsWith("GITHUB_") && key.toUpperCase() !== 'GITHUB_WORKSPACE' && process.env[key]){
+            if(!checkIfEnvironmentVariableIsOmitted(key) && process.env[key] ){
+                gitHubEnvironmentVariables += ` -e "${key}=${process.env[key]}" `;
             }
         }
-        console.log(gitHubEnvironmentVariables);
         /*
         For the docker run command, we are doing the following
         - Set the working directory for docker continer
@@ -70,6 +70,57 @@ const run = async () => {
         await executeDockerCommand(` container rm --force ${CONTAINER_NAME} `, true);
     }
 };
+
+const checkIfEnvironmentVariableIsOmitted = (key: string): boolean => {
+
+    const omitEnvironmentVariables: string [] = [
+        'LANG',
+        'HOSTNAME',
+        'PWD',
+        'HOME',
+        'PYTHON_VERSION',
+        'PYTHON_PIP_VERSION',
+        'SHLVL',
+        'PATH',
+        'GPG_KEY',
+        'CONDA',
+        'AGENT_TOOLSDIRECTORY',
+        'GITHUB_WORKSPACE',
+        'RUNNER_PERFLOG',
+        'RUNNER_WORKSPACE',
+        'RUNNER_TEMP',
+        'RUNNER_TRACKING_ID',
+        'RUNNER_TOOL_CACHE',
+        'DOTNET_SKIP_FIRST_TIME_EXPERIENCE',
+        'JOURNAL_STREAM',
+        'DEPLOYMENT_BASEPATH',
+        'VCPKG_INSTALLATION_ROOT',
+        'PERFLOG_LOCATION_SETTING'
+    ];
+
+    const omitEnvironmentVariablesWithPrefix: string [] = [
+        'JAVA_',
+        'LEIN_',
+        'M2_',
+        'BOOST_',
+        'GOROOT',
+        'ANDROID_',
+        'GRADLE_',
+        'ANY_',
+        'CHROME_'
+    ];
+    for (let i = 0; i < omitEnvironmentVariables.length; i++){
+        if (omitEnvironmentVariables[i] === key.toUpperCase()){
+            return true;
+        }
+    }
+    
+    let matched = omitEnvironmentVariablesWithPrefix.filter((prefix: string) => key.toUpperCase().startsWith(prefix) );
+    if (matched.length > 0){
+        return true;
+    }
+    return false;
+}
 
 const checkIfValidCLIVersion = async (azcliversion: string): Promise<boolean> => {
     const allVersions: Array<string> = await getAllAzCliVersions();
