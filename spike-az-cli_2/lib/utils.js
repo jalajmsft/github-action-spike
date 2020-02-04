@@ -98,9 +98,5 @@ exports.checkIfEnvironmentVariableIsOmitted = (key) => {
             return true;
         }
     }
-    let matched = omitEnvironmentVariablesWithPrefix.filter((prefix) => key.toUpperCase().startsWith(prefix));
-    if (matched.length > 0) {
-        return true;
-    }
-    return false;
+    return omitEnvironmentVariablesWithPrefix.some((prefix) => key.toUpperCase().startsWith(prefix));
 };
