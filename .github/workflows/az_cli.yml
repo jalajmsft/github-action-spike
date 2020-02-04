@@ -25,10 +25,12 @@ jobs:
           
           
     - name: Azure cli
-      uses: azure/CLI@v1.0.2
+      uses: azure/CLI@v1.0.3
+      env: 
+        showVariable: show
       with:
         inlineScript: |
           printenv
-          az account show
+          az account $showVariable
           az storage -h
         
