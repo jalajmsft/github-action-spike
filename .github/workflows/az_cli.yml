@@ -22,7 +22,7 @@ jobs:
         azcliversion: 2.0.68
         inlineScript: |
           printenv
-          az account #showVariable
+          az account $showVariable
           az storage -h
           
           
